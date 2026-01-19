@@ -15,8 +15,8 @@ const michroma = Michroma({
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
   return (
-    <html lang="en" className={michroma.className}>
-      <body className="bg-yutaniGrey">
+    <html lang="en" className="bg-yutaniGrey">
+      <body className={michroma.className}>
         {children}
       </body>
     </html>
