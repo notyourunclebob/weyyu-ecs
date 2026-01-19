@@ -1,7 +1,7 @@
 db.employees.drop();
 db.employees.insert([
     {
-        "_id": "EC/#9549874308",
+        "employeeId": "EC/#9549874308",
         "firstName": "Meredith",
         "lalsName": "Vickers",
         "admin": true,
@@ -9,7 +9,7 @@ db.employees.insert([
         "password": "$2a$12$mcre1cmb6I8PJYXU38qd/.staFwyZuR/SPOROtMwxjkBFvvzw.cNi"
     },
     {
-        "_id": "EC/#4861258765",
+        "employeeId": "EC/#4861258765",
         "firstName": "Idris",
         "lastName": "Janek",
         "admin": false,
