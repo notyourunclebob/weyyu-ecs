@@ -7,13 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "production": "next build && next start"
+    "production": "next build && next start",
+    "docs": "typedoc --entryPoints ./src --out docs --entryPointStrategy expand"
   },
   "dependencies": {
     "mongodb": "^6.20.0",
     "next": "^15.5.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "typedoc": "^0.28.16"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
