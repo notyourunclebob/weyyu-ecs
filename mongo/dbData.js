@@ -31,7 +31,7 @@ db.claims.insert([
         }
     },
     {
-        "Sataus": "open",
+        "Status": "open",
         "employee_id": "EC/#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
