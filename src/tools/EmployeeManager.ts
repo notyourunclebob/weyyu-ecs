@@ -10,7 +10,7 @@ const COLLECTION_EMPLOYEES:string = "employees";
 
 /** 
  * Makes a request to query the db for a matching employeeId then checks the password to validate login.
- * Returns a json response with a login message and employee data.
+ * Returns a json response with a message for access logs and employee data.
  * @param request uses a next request { employeeId: "", password: "" } to verify credentials.
 */
 export async function employeeLogin(request: NextRequest){
@@ -26,6 +26,7 @@ export async function employeeLogin(request: NextRequest){
         let employeeCollection:Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);        
         let employee:Employee | null = await employeeCollection.findOne( { employeeId: body.employeeId } );
 
+        // bad username
         if (!employee) {
             return NextResponse.json(
                 { error: "Failed login attempt: Invalid ID" },
@@ -35,6 +36,7 @@ export async function employeeLogin(request: NextRequest){
 
         const isVerified = await verifyPass(body.password, employee.password);
 
+        // bad password
         if (!isVerified) {
             return NextResponse.json(
                 { error: "Failed login attempt: Password"},
@@ -42,6 +44,7 @@ export async function employeeLogin(request: NextRequest){
             );
         }
 
+        // employee data sent on a successful login
         const employeeData = {
             employeeId: employee.employeeId,
             firstName: employee.firstName,
