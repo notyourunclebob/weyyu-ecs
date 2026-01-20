@@ -1,16 +1,22 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Michroma } from 'next/font/google'
 
 export const metadata: Metadata = {
-  title: "Wayland Ytani ECS",
+  title: "Weyland Ytani ECS",
   description: "Employee electronic claims system",
 };
 
-export default function RootLayout({ children }:Readonly<{ children: React.ReactNode }>) {
+const michroma = Michroma({
+  weight: '400',
+  subsets: ['latin'],
+})
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
 
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="bg-yutaniGrey">
+      <body className={michroma.className}>
         {children}
       </body>
     </html>

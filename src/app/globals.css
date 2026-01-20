@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+@theme {
+    --color-yutaniYellow: #FFD302;
+    --color-yutaniGrey: #C8C8C8;
+}

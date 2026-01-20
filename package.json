@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "production": "next build && next start"
+    "production": "next build && next start",
+    "docs": "typedoc --entryPoints ./src --out docs --entryPointStrategy expand"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -15,6 +16,7 @@
     "next": "^15.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "typedoc": "^0.28.16"
     "sanitize-html": "^2.17.0"
   },
   "devDependencies": {
