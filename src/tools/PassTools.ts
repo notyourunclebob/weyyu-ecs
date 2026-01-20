@@ -9,7 +9,7 @@ const SALT_ROUNDS = 12;
 /** 
  * Returns a hash code by salting the provided password.
  * Bcrypt embeds the salt code in the hash so only the hash needs to be saved.
- * @param password the password usee to generate hash.
+ * @param password the password used to generate hash.
 */
 export async function hashPass(password: string): Promise<string> {
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -18,8 +18,8 @@ export async function hashPass(password: string): Promise<string> {
 
 /** 
  * Verifies provided password by comparing it to the hash code and returns true if valid.
- * @param password Password to compare to the hash.
- * @param hashedPass Saved hash code to compare with.
+ * @param password Password to compare to the hashed password.
+ * @param hashedPass Saved hashed password to compare with.
 */
 export async function verifyPass(password:string, hashedPass:string): Promise<boolean> {
     const isVerified = await bcrypt.compare(password, hashedPass);

@@ -1,15 +1,15 @@
 db.employees.drop();
 db.employees.insert([
     {
-        "_id": "EC/#9549874308",
+        "employeeId": "EC/#9549874308",
         "firstName": "Meredith",
-        "lalsName": "Vickers",
+        "lastName": "Vickers",
         "admin": true,
         // password is DavidSucks
         "password": "$2a$12$mcre1cmb6I8PJYXU38qd/.staFwyZuR/SPOROtMwxjkBFvvzw.cNi"
     },
     {
-        "_id": "EC/#4861258765",
+        "employeeId": "EC/#4861258765",
         "firstName": "Idris",
         "lastName": "Janek",
         "admin": false,
@@ -31,7 +31,7 @@ db.claims.insert([
         }
     },
     {
-        "Sataus": "open",
+        "Status": "open",
         "employee_id": "EC/#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
