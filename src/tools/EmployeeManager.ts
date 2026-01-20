@@ -11,7 +11,7 @@ const COLLECTION_EMPLOYEES:string = "employees";
 /** 
  * Makes a request to query the db for a matching employeeId then checks the password to validate login.
  * Returns a json response with a login message and employee data.
- * @param request uses a next request { employeeId: "", password: "" } to verify credentials
+ * @param request uses a next request { employeeId: "", password: "" } to verify credentials.
 */
 export async function employeeLogin(request: NextRequest){
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -24,7 +24,7 @@ export async function employeeLogin(request: NextRequest){
         body.password = sanitize(body.password);
 
         let employeeCollection:Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);        
-        let employee:Employee | null = await employeeCollection.findOne( { employeeId: body.employeeId } )
+        let employee:Employee | null = await employeeCollection.findOne( { employeeId: body.employeeId } );
 
         if (!employee) {
             return NextResponse.json(

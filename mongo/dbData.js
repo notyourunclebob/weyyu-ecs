@@ -3,7 +3,7 @@ db.employees.insert([
     {
         "employeeId": "EC/#9549874308",
         "firstName": "Meredith",
-        "lalsName": "Vickers",
+        "lastName": "Vickers",
         "admin": true,
         // password is DavidSucks
         "password": "$2a$12$mcre1cmb6I8PJYXU38qd/.staFwyZuR/SPOROtMwxjkBFvvzw.cNi"
