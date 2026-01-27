@@ -55,7 +55,7 @@ export async function employeeLogin(request: NextRequest){
         if (employee.admin == true) {
             return NextResponse.json(
                 {
-                    message: `Login success admin: ${employee.firstName} ${employee.lastName}`,
+                    message: `Login success admin: ${employee.employeeId} ${employee.firstName} ${employee.lastName}`,
                     employee: employeeData
                 },
                 { status: 200 }
@@ -63,7 +63,7 @@ export async function employeeLogin(request: NextRequest){
         } else {
             return NextResponse.json(
                 {
-                    message: `Login success: ${employee.firstName} ${employee.lastName}`,
+                    message: `Login success: ${employee.employeeId} ${employee.firstName} ${employee.lastName}`,
                     employee: employeeData
                 },
                 { status: 200 }
@@ -77,4 +77,34 @@ export async function employeeLogin(request: NextRequest){
     } finally {
         mongoClient.close();
     }
+}
+
+export async function getEmployees(request:NextRequest) {
+    
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    let employeeArray:Employee[];
+
+    try {
+        await mongoClient.connect();
+
+        employeeArray = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).find().toArray();
+
+        employeeArray.forEach((employee:Employee) => employee._id = employee._id.toString())
+    } catch (error:any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    } finally {
+        mongoClient.close();
+    }
+
+    return NextResponse.json(
+        {
+            message: "",
+            employees: employeeArray
+        },
+        { status: 200 }
+    );
 }
