@@ -4,27 +4,27 @@ import sanitize from "sanitize-html";
 import { Employee } from "./employee.model";
 import { verifyPass } from "./PassTools";
 
-const URL:string = process.env.DB_URL!;
-const DB_NAME:string = "ecsDb";
-const COLLECTION_EMPLOYEES:string = "employees";
+const URL: string = process.env.DB_URL!;
+const DB_NAME: string = "ecsDb";
+const COLLECTION_EMPLOYEES: string = "employees";
 
 /** 
  * Makes a request to query the db for a matching employeeId then checks the password to validate login.
  * Returns a json response with a message for access logs and employee data.
  * @param request uses a next request { employeeId: "", password: "" } to verify credentials.
 */
-export async function employeeLogin(request: NextRequest){
+export async function employeeLogin(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
         await mongoClient.connect();
 
-        const body:any = await request.json();
+        const body: any = await request.json();
         body.employeeId = sanitize(body.employeeId);
         body.password = sanitize(body.password);
 
-        let employeeCollection:Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);        
-        let employee:Employee | null = await employeeCollection.findOne( { employeeId: body.employeeId } );
+        let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
+        let employee: Employee | null = await employeeCollection.findOne({ employeeId: body.employeeId });
 
         // bad username
         if (!employee) {
@@ -39,8 +39,8 @@ export async function employeeLogin(request: NextRequest){
         // bad password
         if (!isVerified) {
             return NextResponse.json(
-                { error: "Failed login attempt: Password"},
-                { status: 401 }
+                { error: "Failed login attempt: Password" },
+                { status: 402 }
             );
         }
 
@@ -69,7 +69,7 @@ export async function employeeLogin(request: NextRequest){
                 { status: 200 }
             );
         }
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
