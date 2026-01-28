@@ -20,7 +20,7 @@ db.employees.insert([
 
 db.claims.drop();
 db.claims.insert([
-    { 
+    {
         "Status": "open",
         "employee_id": "EC/#9549874308",
         "receipt": "489104590124890.png",
@@ -52,30 +52,30 @@ db.categories.insert([
         "allowChange": false,
         // This could also be hard coded to make things easier.
         "requirements": [
-            {"requirement": "none"}
+            { "requirement": "none" }
         ]
     },
     {
         "name": "Travel",
         "allowChange": false,
         "requirements": [
-            {"requirement": "locationStart"},
-            {"requirement": "locationEnd"},
-            {"requirement": "distanceKm"},
+            { "requirement": "locationStart" },
+            { "requirement": "locationEnd" },
+            { "requirement": "distanceKm" },
         ]
     },
     {
         "name": "Lodging",
         "allowChange": false,
         "requirements": [
-            {"requirement": "none"}
+            { "requirement": "none" }
         ]
     },
     {
         "name": "Medical",
         "allowChange": false,
         "requirements": [
-            {"requirement": "facehugger"}
+            { "requirement": "facehugger" }
         ]
     },
 ]);
