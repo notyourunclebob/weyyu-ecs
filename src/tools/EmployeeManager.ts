@@ -28,10 +28,12 @@ export async function employeeLogin(request: NextRequest) {
 
         // bad username
         if (!employee) {
-            return NextResponse.json(
+            const response = NextResponse.json(
                 { error: "Failed login attempt: Invalid ID" },
-                { status: 401 }
+                { status: 401, statusText: "An error!? Oh no!" }
             );
+            console.log(response);
+            return response;
         }
 
         const isVerified = await verifyPass(body.password, employee.password);
@@ -40,12 +42,12 @@ export async function employeeLogin(request: NextRequest) {
         if (!isVerified) {
             return NextResponse.json(
                 { error: "Failed login attempt: Password" },
-                { status: 402 }
+                { status: 401, statusText: "An error!? Oh no!" }
             );
         }
 
         // employee data sent on a successful login
-        const employeeData = {
+        const user = {
             employeeId: employee.employeeId,
             firstName: employee.firstName,
             lastName: employee.lastName,
@@ -56,7 +58,7 @@ export async function employeeLogin(request: NextRequest) {
             return NextResponse.json(
                 {
                     message: `Login success admin: ${employee.employeeId} ${employee.firstName} ${employee.lastName}`,
-                    employee: employeeData
+                    user: user
                 },
                 { status: 200 }
             );
@@ -64,7 +66,7 @@ export async function employeeLogin(request: NextRequest) {
             return NextResponse.json(
                 {
                     message: `Login success: ${employee.employeeId} ${employee.firstName} ${employee.lastName}`,
-                    employee: employeeData
+                    user: user
                 },
                 { status: 200 }
             );
