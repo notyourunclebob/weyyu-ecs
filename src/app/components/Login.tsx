@@ -8,6 +8,7 @@ export default function Login() {
   let sendUrl: string = "/api/employee/login";
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [success, setSuccess] = useState<boolean>(false);
 
   async function sendLogin() {
     // let hashedPass = hashPass(password);
@@ -23,9 +24,11 @@ export default function Login() {
     // error checking
     if (!response) {
       console.log("Error>>> 404: No response from DB");
+      setSuccess(false);
     } else if (response?.status !== 200) {
       let returnData = response.data;
       console.log(returnData.error);
+      setSuccess(false);
     } else {
       // parses data from the response: returnData.message is the message returndata.user is the user data. I also added user.model for types
       let returnData = response.data;
@@ -35,6 +38,9 @@ export default function Login() {
 
       // log for testing
       console.log(`${returnData.message}:\n admin?: ${user.admin}`);
+
+      setSuccess(true);
+
 
       setPassword("");
       setUsername("");
@@ -77,6 +83,12 @@ export default function Login() {
           >
             Login
           </button>
+
+          {success && (
+            <div className="p-4 bg-green-100 border border-green-400 rounded">
+              Success
+            </div>
+          )}
         </div>
       </div>
     </div>
