@@ -34,7 +34,7 @@ export default function Login() {
       const user: User = returnData.user;
 
       // log for testing
-      console.log(`${returnData.message}:\n adimn?: ${user.admin}`);
+      console.log(`${returnData.message}:\n admin?: ${user.admin}`);
 
       setPassword("");
       setUsername("");
