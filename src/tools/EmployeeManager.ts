@@ -30,7 +30,7 @@ export async function employeeLogin(request: NextRequest) {
         if (!employee) {
             const response = NextResponse.json(
                 { error: "Failed login attempt: Invalid ID" },
-                { status: 401, statusText: "An error!? Oh no!" }
+                { status: 401, statusText: "Bad credentials" }
             );
             console.log(response);
             return response;
@@ -42,7 +42,7 @@ export async function employeeLogin(request: NextRequest) {
         if (!isVerified) {
             return NextResponse.json(
                 { error: "Failed login attempt: Password" },
-                { status: 401, statusText: "An error!? Oh no!" }
+                { status: 401, statusText: "Bad credentials" }
             );
         }
 
@@ -81,7 +81,8 @@ export async function employeeLogin(request: NextRequest) {
     }
 }
 
-export async function getEmployees(request:NextRequest) {
+// returns a list of all employee data
+export async function getEmployees() {
     
     let mongoClient: MongoClient = new MongoClient(URL);
 
@@ -104,7 +105,7 @@ export async function getEmployees(request:NextRequest) {
 
     return NextResponse.json(
         {
-            message: "",
+            message: "Employees accessed",
             employees: employeeArray
         },
         { status: 200 }
