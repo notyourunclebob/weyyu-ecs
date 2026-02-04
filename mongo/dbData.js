@@ -46,7 +46,7 @@ db.claims.insert([
 
 db.categories.drop();
 db.categories.insert([
-    // categories are used as a reference to determine reqired fields when making a claim
+    // categories are used as a reference to determine required fields when making a claim
     {
         "name": "Food",
         "allowChange": false,
