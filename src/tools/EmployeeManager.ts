@@ -4,7 +4,7 @@ import sanitize from "sanitize-html";
 import { Employee } from "./employee.model";
 import { verifyPass } from "./PassTools";
 
-const URL: string = process.env.DB_URL!;
+const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
 const DB_NAME: string = "ecsDb";
 const COLLECTION_EMPLOYEES: string = "employees";
 
