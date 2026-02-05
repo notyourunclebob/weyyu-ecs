@@ -3,12 +3,16 @@ import { useState } from "react";
 // import { hashPass } from "@/tools/PassTools";
 import { sendJSONData } from "@/tools/Toolkit";
 import { User } from "@/tools/user.model";
+import { useRouter } from 'next/navigation';
+import { Router } from "next/router";
 
 export default function Login() {
   let sendUrl: string = "/api/employee/login";
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
+
+  const router = useRouter();
 
   async function sendLogin() {
     // let hashedPass = hashPass(password);
@@ -41,9 +45,13 @@ export default function Login() {
 
       setSuccess(true);
 
-
       setPassword("");
       setUsername("");
+      if (!user.admin) {
+        router.push(`/dashboard/${user.employeeId}`)
+      } else if (user.admin) {
+        router.push(`/dashboardAdmin/${user.employeeId}`)
+      }
     }
   }
   return (
