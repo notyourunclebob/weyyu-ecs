@@ -1,5 +1,5 @@
 import { getEmployees } from "@/tools/EmployeeManager";
 
-export function POST() {
-    
+export function GET() {
+    return(getEmployees());
 }

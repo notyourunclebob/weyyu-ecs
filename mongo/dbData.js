@@ -1,7 +1,8 @@
 db.employees.drop();
 db.employees.insert([
     {
-        "employeeId": "EC/#9549874308",
+        "_id": "6983a3ccedac1851ff8ce5b0",
+        "employeeId": "EC#9549874308",
         "firstName": "Meredith",
         "lastName": "Vickers",
         "admin": true,
@@ -9,7 +10,8 @@ db.employees.insert([
         "password": "$2a$12$mcre1cmb6I8PJYXU38qd/.staFwyZuR/SPOROtMwxjkBFvvzw.cNi"
     },
     {
-        "employeeId": "EC/#4861258765",
+        "_id": "6983a3ccedac1851ff8ce5b1",
+        "employeeId": "EC#4861258765",
         "firstName": "Idris",
         "lastName": "Janek",
         "admin": false,
@@ -22,7 +24,7 @@ db.claims.drop();
 db.claims.insert([
     {
         "Status": "open",
-        "employee_id": "EC/#9549874308",
+        "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
         "description": "Purchase of Weyland Yutani personal medical pod (experimental)",
         "category": {
@@ -32,7 +34,7 @@ db.claims.insert([
     },
     {
         "Status": "open",
-        "employee_id": "EC/#4861258765",
+        "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
         "category": {

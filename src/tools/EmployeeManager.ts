@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from "mongodb";
+import { Collection, MongoClient, ObjectId, UpdateResult } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
 import { Employee } from "./employee.model";
@@ -30,7 +30,7 @@ export async function employeeLogin(request: NextRequest) {
         if (!employee) {
             const response = NextResponse.json(
                 { error: "Failed login attempt: Invalid ID" },
-                { status: 401, statusText: "An error!? Oh no!" }
+                { status: 401, statusText: "Bad credentials" }
             );
             console.log(response);
             return response;
@@ -42,7 +42,7 @@ export async function employeeLogin(request: NextRequest) {
         if (!isVerified) {
             return NextResponse.json(
                 { error: "Failed login attempt: Password" },
-                { status: 401, statusText: "An error!? Oh no!" }
+                { status: 401, statusText: "Bad credentials" }
             );
         }
 
@@ -81,7 +81,8 @@ export async function employeeLogin(request: NextRequest) {
     }
 }
 
-export async function getEmployees(request:NextRequest) {
+// returns a list of all employee data
+export async function getEmployees() {
     
     let mongoClient: MongoClient = new MongoClient(URL);
 
@@ -104,9 +105,58 @@ export async function getEmployees(request:NextRequest) {
 
     return NextResponse.json(
         {
-            message: "",
+            message: "Employees accessed",
             employees: employeeArray
         },
         { status: 200 }
     );
+}
+
+// updates an existing employee
+export async function updateEmployee(request:NextRequest, id:string) {
+
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        await mongoClient.connect();
+
+        let employeeId:ObjectId = new ObjectId(sanitize(id));
+
+        const body:any = await request.json();
+
+        body.firstName = sanitize(body.firstName);
+        body.lastName = sanitize(body.lastName);
+        // ***need to add a way to check and change passwords***
+        // body.password = sanitize(body.password);
+
+        let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
+        let selector:Object = { "_id": employeeId };
+        let newValues:Object = { $set: { 
+            firstName: body.firstName, 
+            lastName: body.lastName, 
+            admin: body.admin } };
+        let result:UpdateResult = await employeeCollection.updateOne(selector, newValues);
+
+        if (result.matchedCount <= 0 ) {
+            return NextResponse.json(
+                { error: "Employee id doesn't exist" },
+                { status: 404, statusText: "Employee id doesn't exist" }
+            );
+        } else {
+            return NextResponse.json(
+                {
+                    message: "Employee updated",
+                    result
+                },
+                { status: 200 }
+            );
+        }
+    } catch (error:any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    } finally {
+        mongoClient.close();
+    }
 }
