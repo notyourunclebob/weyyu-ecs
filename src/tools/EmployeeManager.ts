@@ -130,7 +130,7 @@ export async function updateEmployee(request:NextRequest, id:string) {
         // body.password = sanitize(body.password);
 
         let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
-        let selector:Object = { "_id": employeeId };
+        let selector:Object = { "employeeId": employeeId };
         let newValues:Object = { $set: { 
             firstName: body.firstName, 
             lastName: body.lastName, 
