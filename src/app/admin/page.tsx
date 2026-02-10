@@ -1,6 +1,8 @@
 import Header from "../components/Header";
 
-export default function Unauthorized() {
+// delete me if not needed
+
+export default function Admin() {
   return (
     <div className="w-screen h-screen bg-gray-400">
       <Header />

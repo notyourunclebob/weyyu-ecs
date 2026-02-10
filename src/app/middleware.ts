@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
     // this prevents users from visiting restricted pages
+    // this is only nessicary if we use admin exclusive pages
     function middleware(request) {
         const token = request.nextauth.token;
         const isAdmin = token?.andmin === true;
@@ -24,5 +25,5 @@ export default withAuth(
 );
 
 export const config = {
-    matcher: ["/admin/:path*", "/dashboard/path*"]
+    matcher: ["/admin/:path*", "/dashboard/:path*"]
 };
