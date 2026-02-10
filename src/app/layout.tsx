@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Michroma } from 'next/font/google'
+import { Michroma } from "next/font/google";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "Weyland Ytani ECS",
@@ -8,16 +9,17 @@ export const metadata: Metadata = {
 };
 
 const michroma = Michroma({
-  weight: '400',
-  subsets: ['latin'],
-})
+  weight: "400",
+  subsets: ["latin"],
+});
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="bg-yutaniGrey">
       <body className={michroma.className}>
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

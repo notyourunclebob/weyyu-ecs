@@ -8,6 +8,43 @@ const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
 const DB_NAME: string = "ecsDb";
 const COLLECTION_EMPLOYEES: string = "employees";
 
+
+export async function nextAuthLogin(credentials: Record<"employeeId" | "password", string>) {
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        const employeeId = sanitize(credentials.employeeId);
+        const password = sanitize(credentials.password);
+
+        let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
+
+        let user: Employee | null = await employeeCollection.findOne({ employeeId: employeeId });
+
+        if (!user || !user.password) {
+            throw new Error("Invalid credentials");
+        }
+
+        const isVerified = await verifyPass(password, user.password);
+
+        if (!isVerified) {
+            throw new Error("Invalid credentials");
+        }
+
+        return {
+            id: user._id.toString(),
+            employeeId: user.employeeId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            admin: user.admin,
+        };
+
+    } catch (error:any) {
+        throw new Error("Connection failed");
+    } finally {
+        mongoClient.close();
+    }
+}
+
 /** 
  * Makes a request to query the db for a matching employeeId then checks the password to validate login.
  * Returns a json response with a message for access logs and employee data.

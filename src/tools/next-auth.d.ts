@@ -4,6 +4,7 @@ import NextAuth from "next-auth";
 declare module "next-auth" {
     interface User {
         admin?: boolean;
+        employeeId?: string;
     }
     interface Session {
         user: {
@@ -21,5 +22,6 @@ declare module "next-auth/jwt" {
     interface JWT {
         andmin?: boolean;
         id?: string;
+        employeeId?: string;
     }
 }
