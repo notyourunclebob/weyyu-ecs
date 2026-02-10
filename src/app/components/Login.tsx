@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { User } from "@/tools/user.model";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export default function Login() {
       if (result?.error) {
         console.log("Login error");
       } else {
-        // the dashbord redirect can happen here
+        router.push("/dashbord");
         setSuccess(true);
         setPassword("");
         setUsername("");

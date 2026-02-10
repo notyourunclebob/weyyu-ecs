@@ -1,7 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { MongoClient } from "mongodb";
-import { User } from "@/tools/user.model";
 import { nextAuthLogin } from "@/tools/EmployeeManager";
 
 export const authOptions: NextAuthOptions = {
@@ -9,12 +7,12 @@ export const authOptions: NextAuthOptions = {
         CredentialsProvider({
             name: "Credentials",
             credentials: {
-                employeeId: { label: "Employee ID", type: "text" },
+                username: { label: "Username", type: "text" },
                 password: { label: "Password", type: "password" }
             },
             async authorize(credentials) {
                 
-                if (!credentials?.employeeId || !credentials?.password) {
+                if (!credentials?.username || !credentials?.password) {
                     throw new Error("Invalid credentials");
                 }
 

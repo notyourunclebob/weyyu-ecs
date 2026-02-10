@@ -9,11 +9,11 @@ const DB_NAME: string = "ecsDb";
 const COLLECTION_EMPLOYEES: string = "employees";
 
 
-export async function nextAuthLogin(credentials: Record<"employeeId" | "password", string>) {
+export async function nextAuthLogin(credentials: Record<"username" | "password", string>) {
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
-        const employeeId = sanitize(credentials.employeeId);
+        const employeeId = sanitize(credentials.username);
         const password = sanitize(credentials.password);
 
         let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
