@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export default withAuth(
     // this prevents users from visiting restricted pages
     // this is only nessicary if we use admin exclusive pages
+    // this also isn't working
     function middleware(request) {
         const token = request.nextauth.token;
         const isAdmin = token?.andmin === true;

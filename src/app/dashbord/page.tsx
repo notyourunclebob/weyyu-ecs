@@ -6,6 +6,7 @@ import UserTest from "../components/UserTest";
 import { useSession } from "next-auth/react";
 
 export default function Dashbord() {
+  // the session data from login can be used for conditional rendering
   const { data: session } = useSession();
 
   if (!session) {
