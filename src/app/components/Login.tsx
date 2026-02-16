@@ -1,59 +1,43 @@
 "use client";
 import { useState } from "react";
-// import { hashPass } from "@/tools/PassTools";
-import { sendJSONData } from "@/tools/Toolkit";
-import { User } from "@/tools/user.model";
-import { useRouter } from 'next/navigation';
-import { Router } from "next/router";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  let sendUrl: string = "/api/employee/login";
+  const router = useRouter();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
+  const [sending, setSending] = useState<boolean>(false);
 
   const router = useRouter();
 
   async function sendLogin() {
-    // let hashedPass = hashPass(password);
+    // set up for a spinner overlay
+    setSending(true);
 
-    let data = { employeeId: username, password: password };
+    try {
+      const result = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+      });
 
-    // for testing
-    // console.log("front end:" + data.employeeId + ", " + data.password);
-
-    // changed this to parse data
-    let response = await sendJSONData(sendUrl, data);
-
-    // error checking
-    if (!response) {
-      console.log("Error>>> 404: No response from DB");
-      setSuccess(false);
-    } else if (response?.status !== 200) {
-      let returnData = response.data;
-      console.log(returnData.error);
-      setSuccess(false);
-    } else {
-      // parses data from the response: returnData.message is the message returndata.user is the user data. I also added user.model for types
-      let returnData = response.data;
-
-      // this holds the user data
-      const user: User = returnData.user;
-
-      // log for testing
-      console.log(`${returnData.message}:\n admin?: ${user.admin}`);
-
-      setSuccess(true);
-
-      setPassword("");
-      setUsername("");
-      if (!user.admin) {
-        router.push(`/dashboard/${user.employeeId}`)
-      } else if (user.admin) {
-        router.push(`/dashboardAdmin/${user.employeeId}`)
+      if (result?.error) {
+        console.log("Login error");
+      } else {
+        router.push("/dashbord");
+        setSuccess(true);
+        setPassword("");
+        setUsername("");
       }
+    } catch (error) {
+      console.log("Login error");
+    } finally {
+      setSending(false);
     }
   }
+
   return (
     <div className="flex items-center justify-center h-[calc(100vh-100px)] px-6">
       <div className="bg-black w-full max-w-2xl rounded-3xl p-16 shadow-2xl">
