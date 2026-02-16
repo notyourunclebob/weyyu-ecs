@@ -1,13 +1,26 @@
 import { User } from "@/tools/user.model"
+import Link from "next/link"
 
 // { user }: { user: User }
 export default function Dashboard() {
     return (
-        <div className="min-h-screen bg-gray-200 p-7">
+        <div className="min-h-screen bg-yutaniGrey p-7">
             <div className="bg-black rounded-2xl p-8 min-h-[calc(100vh-130px)]">
                 <div className="text-yutaniGrey text-4xl font-light mb-12">
                     Welcome to your dashboard User.
                 </div>
+                <div className="flex flex-col md:flex-row justify-around text-yutaniGrey">
+                    <Link href="/addUser">
+                        Add User
+                    </Link>
+                    <Link href="/editCategories">
+                        Edit Categories
+                    </Link>
+                    <Link href="/viewReport">
+                        View Report
+                    </Link>
+                </div>
+
 
                 <div className="space-y-8">
                     <div className="flex flex-col md:flex-row md:justify-around">
@@ -31,9 +44,9 @@ export default function Dashboard() {
                     </div>
 
                     <div className="flex justify-center">
-                        <button className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
+                        <Link href="/submitClaim" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
                             Submit a Claim
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

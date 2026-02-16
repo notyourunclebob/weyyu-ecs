@@ -48,7 +48,7 @@ export default function Login() {
       setPassword("");
       setUsername("");
       if (!user.admin) {
-        router.push(`/dashboard/${user.employeeId}`)
+        router.push(`/dashboard`)
       } else if (user.admin) {
         router.push(`/dashboardAdmin/${user.employeeId}`)
       }
@@ -67,7 +67,7 @@ export default function Login() {
               value={username}
               onChange={(e: any) => setUsername(e.target.value)}
               type="text"
-              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
             />
           </div>
 
@@ -80,13 +80,13 @@ export default function Login() {
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
               type="password"
-              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
             />
           </div>
 
           {/* Login Button */}
           <button
-            className="mt-6 px-12 py-3 bg-yellow-400 text-black text-2xl font-semibold rounded hover:bg-yellow-500 transition-colors"
+            className="mt-6 px-12 py-3 bg-yutaniYellow text-black text-2xl font-semibold rounded hover:bg-yellow-500 transition-colors"
             onClick={sendLogin}
           >
             Login
