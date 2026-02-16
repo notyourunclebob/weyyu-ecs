@@ -10,6 +10,8 @@ export default function Login() {
   const [success, setSuccess] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
 
+  const router = useRouter();
+
   async function sendLogin() {
     // set up for a spinner overlay
     setSending(true);
