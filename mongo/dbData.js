@@ -23,6 +23,7 @@ db.employees.insert([
 db.claims.drop();
 db.claims.insert([
     {
+        "_id": "6994e612e3d875481c8ce5b0",
         "status": "open",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
@@ -33,6 +34,7 @@ db.claims.insert([
         }
     },
     {
+        "_id": "6994e612e3d875481c8ce5b1",
         "status": "open",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
