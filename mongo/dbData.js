@@ -45,6 +45,17 @@ db.claims.insert([
             "locationEnd": "San Francisco, California",
             "distanceKm": 363104
         }
+    },
+    {
+        "_id": "6994f5e7c8d2b3c97c8ce5b0",
+        "status": "closed",
+        "employeeId": "EC#4861258765",
+        "receipt": "51456717090.png",
+        "description": "Headache medicine",
+        "category": {
+            "name": "Medical",
+            "faceHugger": false
+        }
     }
 ]);
 
