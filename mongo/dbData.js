@@ -23,7 +23,7 @@ db.employees.insert([
 db.claims.drop();
 db.claims.insert([
     {
-        "Status": "open",
+        "status": "open",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
         "description": "Purchase of Weyland Yutani personal medical pod (experimental)",
@@ -33,7 +33,7 @@ db.claims.insert([
         }
     },
     {
-        "Status": "open",
+        "status": "open",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",

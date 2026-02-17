@@ -62,7 +62,7 @@ export async function getEmployees() {
 
         employeeArray = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).find().toArray();
 
-        employeeArray.forEach((employee:Employee) => employee._id = employee._id.toString())
+        employeeArray.forEach((employee:Employee) => employee._id = employee._id.toString());
     } catch (error:any) {
         return NextResponse.json(
             { error: error.message },
