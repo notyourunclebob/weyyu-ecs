@@ -10,8 +10,6 @@ export default function Login() {
   const [success, setSuccess] = useState<boolean>(false);
   const [sending, setSending] = useState<boolean>(false);
 
-  const router = useRouter();
-
   async function sendLogin() {
     // set up for a spinner overlay
     setSending(true);
@@ -75,12 +73,6 @@ export default function Login() {
           >
             Login
           </button>
-
-          {success && (
-            <div className="p-4 bg-green-100 border border-green-400 rounded">
-              Success
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -1,22 +1,28 @@
-"use client";
-
 import Header from "../components/Header";
-import AdminTest from "../components/AdminTest";
-import UserTest from "../components/UserTest";
-import { useSession } from "next-auth/react";
+import { Claim } from "@/tools/claim.model";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getJSONData } from "@/tools/Toolkit";
+import Dashboard from "../components/Dashboard";
+import { redirect } from "next/navigation";
 
-export default function Dashbord() {
-  // the session data from login can be used for conditional rendering
-  const { data: session } = useSession();
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
-    return <div>Loading...</div>;
+    redirect("/login");
+  }
+
+  let claims: Claim[] = [];
+  if (session.user.admin) {
+    const data = await getJSONData("/api/claim/getAll");
+    claims = data.claims;
   }
 
   return (
-    <div className="w-screen h-screen bg-gray-400">
+    <div>
       <Header />
-      {session.user.admin === true ? <AdminTest /> : <UserTest />}
+      <Dashboard claims={claims} />
     </div>
   );
 }
