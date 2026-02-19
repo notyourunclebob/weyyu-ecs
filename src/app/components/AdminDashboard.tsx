@@ -37,7 +37,7 @@ export default function AdminDashboard() {
                                 Approved Claims
                             </div>
                             <div className="bg-yutaniGrey rounded h-80 w-150">
-                                {/* pending claims go here */}
+                                {/* approved claims go here */}
                             </div>
                         </div>
                     </div>
