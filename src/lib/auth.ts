@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.andmin = user.admin;
+                token.admin = user.admin;
                 token.id = user.id;
                 token.employeeId = user.employeeId;
             }
@@ -31,7 +31,7 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             if (session?.user) {
-                session.user.admin = token.andmin as boolean;
+                session.user.admin = token.admin as boolean;
                 session.user.id = token.id as string;
             }
             return session;
@@ -45,6 +45,3 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET
 };
-
-const handeler = NextAuth(authOptions);
-export { handeler as GET, handeler as POST };
