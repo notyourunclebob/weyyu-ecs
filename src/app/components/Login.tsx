@@ -24,7 +24,7 @@ export default function Login() {
       if (result?.error) {
         console.log("Login error");
       } else {
-        router.push("/dashbord");
+        router.push("/dashboard");
         setSuccess(true);
         setPassword("");
         setUsername("");
