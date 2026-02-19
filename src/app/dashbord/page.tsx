@@ -15,7 +15,7 @@ export default async function DashboardPage() {
 
   let claims: Claim[] = [];
   if (session.user.admin) {
-    const data = await getJSONData("/api/claim/getAll");
+    const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/claim/getAll`);
     claims = data.claims;
   }
 

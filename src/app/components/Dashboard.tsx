@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default async function Dashboard(claims: { claims: Claim[] }) {
+export default function Dashboard(claims: { claims: Claim[] }) {
     // the session data from login can be used for conditional rendering
     const { data: session } = useSession();
 
@@ -15,7 +15,6 @@ export default async function Dashboard(claims: { claims: Claim[] }) {
 
     return (
         <div className="w-screen h-screen bg-gray-400">
-            <Header />
             <div className="min-h-screen bg-gray-200 p-7">
                 <div className="bg-black rounded-2xl p-8 min-h-[calc(100vh-130px)]">
                     <div className="text-yutaniGrey text-4xl font-light mb-6">
