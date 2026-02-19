@@ -1,7 +1,6 @@
 "use client";
 
 import { Claim } from "@/tools/claim.model";
-import Header from "../components/Header";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -63,9 +62,9 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                         </div>
 
                         <div className="flex justify-center mt-6">
-                            <button className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
+                            <Link href="/submitClaim" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
                                 Submit a Claim
-                            </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

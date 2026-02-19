@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import { Claim } from "@/tools/claim.model";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { getJSONData } from "@/tools/Toolkit";
 import Dashboard from "../components/Dashboard";
 import { redirect } from "next/navigation";
