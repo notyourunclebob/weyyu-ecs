@@ -2,11 +2,14 @@
 
 import { Claim } from "@/tools/claim.model";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Dashboard(claims: { claims: Claim[] }) {
     // the session data from login can be used for conditional rendering
     const { data: session } = useSession();
+    const [claimData, setClaimData] = useState<Claim[]>(claims.claims)
+    console.log(claimData);
 
     if (!session) {
         return <div>Loading...</div>;
@@ -41,7 +44,7 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                 </div>
                                 <div className="bg-yutaniGrey rounded h-80 w-150">
                                     {/* pending claims go here */}
-                                    {claims.claims.filter((claim) => claim.Status === "open").map((claim) => (
+                                    {claimData.filter((claim: Claim) => claim.status === "open").map((claim: Claim) => (
                                         <div key={claim._id}>
                                             <div>
                                                 Claim {claim._id}
@@ -56,7 +59,14 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                     Approved Claims
                                 </div>
                                 <div className="bg-yutaniGrey rounded h-80 w-150">
-                                    {/* pending claims go here */}
+                                    {/* approved claims go here */}
+                                    {claimData.filter((claim: Claim) => claim.status === "closed").map((claim: Claim) => (
+                                        <div key={claim._id}>
+                                            <div>
+                                                Claim {claim._id}
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

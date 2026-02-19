@@ -1,16 +1,16 @@
 export interface Claim {
-    _id:         string;
-    Status:      string;
+    _id: string;
+    status: string;
     employee_id: string;
-    receipt:     string;
+    receipt: string;
     description: string;
-    category:    Category;
+    category: Category;
 }
 
 export interface Category {
-    name:           string;
-    faceHugger?:    boolean;
+    name: string;
+    faceHugger?: boolean;
     locationStart?: string;
-    locationEnd?:   string;
-    distanceKm?:    number;
+    locationEnd?: string;
+    distanceKm?: number;
 }
