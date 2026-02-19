@@ -16,8 +16,8 @@ export default function Dashboard(claims: { claims: Claim[] }) {
     }
 
     return (
-        <div className="w-screen h-screen bg-gray-400">
-            <div className="min-h-screen bg-gray-200 p-7">
+        <div className="w-screen h-screen bg-yutaniGrey">
+            <div className="min-h-screen bg-yutaniGrey p-7">
                 <div className="bg-black rounded-2xl p-8 min-h-[calc(100vh-130px)]">
                     <div className="text-yutaniGrey text-4xl font-light mb-6">
                         Welcome to your dashboard {session.user.firstName}.

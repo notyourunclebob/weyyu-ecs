@@ -78,7 +78,7 @@ export default function EmployeeClaimSystem() {
                                 value={formData.date}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-4 py-3 bg-gray-400 border-2 border-gray-500 rounded text-black placeholder-gray-700 focus:outline-none focus:border-yutaniYellow"
+                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
                             />
                         </div>
 
@@ -90,7 +90,7 @@ export default function EmployeeClaimSystem() {
                                 value={formData.category}
                                 onChange={handleInputChange}
                                 required
-                                className="w-full px-4 py-3 bg-gray-400 border-2 border-gray-500 rounded text-black focus:outline-none focus:border-yutaniYellow"
+                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black focus:outline-none focus:border-yutaniYellow"
                             >
                                 <option value="">Select a category</option>
                                 <option value="travel">Meals</option>
@@ -111,7 +111,7 @@ export default function EmployeeClaimSystem() {
                                 placeholder="0.00"
                                 step="0.01"
                                 required
-                                className="w-full px-4 py-3 bg-gray-400 border-2 border-gray-500 rounded text-black placeholder-gray-700 focus:outline-none focus:border-yutaniYellow"
+                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
                             />
                         </div>
 
@@ -124,7 +124,7 @@ export default function EmployeeClaimSystem() {
                                 onChange={handleInputChange}
                                 required
                                 rows={6}
-                                className="w-full px-4 py-3 bg-gray-400 border-2 border-gray-500 rounded text-black placeholder-gray-700 focus:outline-none focus:border-yutaniYellow resize-none"
+                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow resize-none"
                             />
                         </div>
                     </div>
@@ -133,7 +133,7 @@ export default function EmployeeClaimSystem() {
                     <div className="flex flex-col">
                         <label className="block text-yutaniGrey text-sm mb-2 font-light">Add a receipt:</label>
                         <div
-                            className="flex-1 bg-gray-400 border-2 border-gray-500 rounded p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-350 transition"
+                            className="flex-1 bg-yutaniGrey border-2 border-yutaniGrey rounded p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-yutaniGrey transition"
                             onClick={() => document.getElementById('receipt-input')?.click()}
                         >
                             {receiptPreview ? (
@@ -146,7 +146,7 @@ export default function EmployeeClaimSystem() {
                                 </div>
                             ) : (
                                 <div className="text-center">
-                                    <div className="text-gray-700 text-sm font-light">Click to upload receipt image</div>
+                                    <div className="text-yutaniGrey text-sm font-light">Click to upload receipt image</div>
                                 </div>
                             )}
                         </div>
@@ -166,7 +166,7 @@ export default function EmployeeClaimSystem() {
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="px-12 py-3 bg-gray-400 border-2 border-gray-500 text-black font-light rounded hover:bg-gray-350 transition"
+                        className="px-12 py-3 bg-yutaniGrey border-2 border-yutaniGrey text-black font-light rounded hover:bg-yutaniGrey transition"
                     >
                         Cancel
                     </button>

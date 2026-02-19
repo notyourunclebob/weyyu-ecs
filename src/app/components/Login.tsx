@@ -49,7 +49,7 @@ export default function Login() {
               value={username}
               onChange={(e: any) => setUsername(e.target.value)}
               type="text"
-              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
+              className="w-full px-4 py-3 bg-yutaniGrey rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
             />
           </div>
 
@@ -62,7 +62,7 @@ export default function Login() {
               value={password}
               onChange={(e: any) => setPassword(e.target.value)}
               type="password"
-              className="w-full px-4 py-3 bg-gray-300 rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
+              className="w-full px-4 py-3 bg-yutaniGrey rounded text-black focus:outline-none focus:ring-2 focus:ring-yutaniYellow"
             />
           </div>
 
