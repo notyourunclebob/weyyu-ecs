@@ -20,7 +20,7 @@ declare module "next-auth" {
 // this is the authentication token data
 declare module "next-auth/jwt" {
     interface JWT {
-        andmin?: boolean;
+        admin?: boolean;
         id?: string;
         employeeId?: string;
     }
