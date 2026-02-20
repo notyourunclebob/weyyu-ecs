@@ -24,13 +24,13 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
         let user: Employee | null = await employeeCollection.findOne({ employeeId: employeeId });
 
         if (!user || !user.password) {
-            throw new Error("Invalid credentials");
+            return null;
         }
 
         const isVerified = await verifyPass(password, user.password);
 
         if (!isVerified) {
-            throw new Error("Invalid credentials");
+            return null;
         }
 
         return {
