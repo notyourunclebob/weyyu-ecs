@@ -33,6 +33,7 @@ export const authOptions: NextAuthOptions = {
             if (session?.user) {
                 session.user.admin = token.admin as boolean;
                 session.user.id = token.id as string;
+                session.user.employeeId = token.employeeId as string;
             }
             return session;
         }
