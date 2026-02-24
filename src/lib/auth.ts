@@ -13,10 +13,15 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials) {
 
                 if (!credentials?.username || !credentials?.password) {
-                    throw new Error("Invalid credentials");
+                    return null;
                 }
 
-                return nextAuthLogin(credentials);
+                try {
+                    const result = await nextAuthLogin(credentials);
+                    return result;
+                } catch (error) {
+                    return null;
+                }
             },
         })
     ],
