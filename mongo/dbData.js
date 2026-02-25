@@ -23,7 +23,8 @@ db.employees.insert([
 db.claims.drop();
 db.claims.insert([
     {
-        "Status": "open",
+        "_id": "6994e612e3d875481c8ce5b0",
+        "status": "open",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
         "description": "Purchase of Weyland Yutani personal medical pod (experimental)",
@@ -33,7 +34,8 @@ db.claims.insert([
         }
     },
     {
-        "Status": "open",
+        "_id": "6994e612e3d875481c8ce5b1",
+        "status": "open",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
@@ -42,6 +44,17 @@ db.claims.insert([
             "locationStart": "Sea of Tranquility, Moon",
             "locationEnd": "San Francisco, California",
             "distanceKm": 363104
+        }
+    },
+    {
+        "_id": "6994f5e7c8d2b3c97c8ce5b0",
+        "status": "closed",
+        "employeeId": "EC#4861258765",
+        "receipt": "51456717090.png",
+        "description": "Headache medicine",
+        "category": {
+            "name": "Medical",
+            "faceHugger": false
         }
     }
 ]);

@@ -5,7 +5,7 @@ import { Employee } from "./employee.model";
 import { verifyPass } from "./PassTools";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsDb";
+const DB_NAME: string = "ecsdb";
 const COLLECTION_EMPLOYEES: string = "employees";
 
 /** 
@@ -24,13 +24,13 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
         let user: Employee | null = await employeeCollection.findOne({ employeeId: employeeId });
 
         if (!user || !user.password) {
-            throw new Error("Invalid credentials");
+            return null;
         }
 
         const isVerified = await verifyPass(password, user.password);
 
         if (!isVerified) {
-            throw new Error("Invalid credentials");
+            return null;
         }
 
         return {
@@ -41,8 +41,9 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
             admin: user.admin,
         };
 
-    } catch (error:any) {
-        throw new Error("Connection failed");
+    } catch (error: any) {
+        console.error("nextAuthLogin error:", error);
+        throw error;
     } finally {
         mongoClient.close();
     }
@@ -52,18 +53,18 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
  * When called will query datadase and return a list of all employee data
 */
 export async function getEmployees() {
-    
+
     let mongoClient: MongoClient = new MongoClient(URL);
 
-    let employeeArray:Employee[];
+    let employeeArray: Employee[];
 
     try {
         await mongoClient.connect();
 
         employeeArray = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).find().toArray();
 
-        employeeArray.forEach((employee:Employee) => employee._id = employee._id.toString())
-    } catch (error:any) {
+        employeeArray.forEach((employee: Employee) => employee._id = employee._id.toString());
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
@@ -83,16 +84,16 @@ export async function getEmployees() {
 
 // *** this is out of scope ***
 // updates an existing employee 
-export async function updateEmployee(request:NextRequest, id:string) {
+export async function updateEmployee(request: NextRequest, id: string) {
 
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
         await mongoClient.connect();
 
-        let employeeId:ObjectId = new ObjectId(sanitize(id));
+        let employeeId: ObjectId = new ObjectId(sanitize(id));
 
-        const body:any = await request.json();
+        const body: any = await request.json();
 
         body.firstName = sanitize(body.firstName);
         body.lastName = sanitize(body.lastName);
@@ -100,14 +101,17 @@ export async function updateEmployee(request:NextRequest, id:string) {
         // body.password = sanitize(body.password);
 
         let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
-        let selector:Object = { "employeeId": employeeId };
-        let newValues:Object = { $set: { 
-            firstName: body.firstName, 
-            lastName: body.lastName, 
-            admin: body.admin } };
-        let result:UpdateResult = await employeeCollection.updateOne(selector, newValues);
+        let selector: Object = { "employeeId": employeeId };
+        let newValues: Object = {
+            $set: {
+                firstName: body.firstName,
+                lastName: body.lastName,
+                admin: body.admin
+            }
+        };
+        let result: UpdateResult = await employeeCollection.updateOne(selector, newValues);
 
-        if (result.matchedCount <= 0 ) {
+        if (result.matchedCount <= 0) {
             return NextResponse.json(
                 { error: "Employee id doesn't exist" },
                 { status: 404, statusText: "Employee id doesn't exist" }
@@ -121,7 +125,7 @@ export async function updateEmployee(request:NextRequest, id:string) {
                 { status: 200 }
             );
         }
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }

@@ -1,5 +1,5 @@
 // test passwords can be generated at https://bcrypt-generator.com/
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 /** 
  * Number of salt rounds to generate hash code (12 recomended).
@@ -21,7 +21,7 @@ export async function hashPass(password: string): Promise<string> {
  * @param password Password to compare to the hashed password.
  * @param hashedPass Saved hashed password to compare with.
 */
-export async function verifyPass(password:string, hashedPass:string): Promise<boolean> {
+export async function verifyPass(password: string, hashedPass: string): Promise<boolean> {
     const isVerified = await bcrypt.compare(password, hashedPass);
     return isVerified;
 }
