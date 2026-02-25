@@ -5,7 +5,7 @@ import sanitize from "sanitize-html";
 
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsDb";
+const DB_NAME: string = "ecsdb";
 const COLLECTION_CLAIMS: string = "claims";
 
 /** 
@@ -20,8 +20,8 @@ export async function getClaimsAll() {
 
         claimArray = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).find().toArray();
 
-        claimArray.forEach((claim:Claim) => claim._id = claim._id.toString());
-    } catch (error:any) {
+        claimArray.forEach((claim: Claim) => claim._id = claim._id.toString());
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
@@ -46,25 +46,25 @@ export async function getClaimsAll() {
 export async function getClaimsEmployee(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
     let claimArray: Claim[];
-    
+
     try {
         await mongoClient.connect();
 
-        const body:any = await request.json();
+        const body: any = await request.json();
 
         body.employeeId = sanitize(body.employeeId);
 
         let selector: Object = { "employeeId": body.employeeId };
         claimArray = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).find(selector).toArray();
 
-        claimArray.forEach((claim:Claim) => claim._id = claim._id.toString());
+        claimArray.forEach((claim: Claim) => claim._id = claim._id.toString());
 
         if (claimArray.length === 0) {
             let error = `No claims for ${body.employeeId} found`;
-            
+
             return NextResponse.json(
                 { error: error },
-                { status: 404 , statusText: error}
+                { status: 404, statusText: error }
             );
         } else {
             return NextResponse.json(
@@ -76,7 +76,7 @@ export async function getClaimsEmployee(request: NextRequest) {
             );
         }
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
