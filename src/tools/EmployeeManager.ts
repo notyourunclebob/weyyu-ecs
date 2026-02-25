@@ -19,15 +19,23 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
         const employeeId = sanitize(credentials.username);
         const password = sanitize(credentials.password);
 
+        console.log("Looking up employeeId:", employeeId);
+        console.log("DB_URL:", process.env.DB_URL);
+
         let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
 
         let user: Employee | null = await employeeCollection.findOne({ employeeId: employeeId });
 
+        console.log("User found:", !!user);
+
         if (!user || !user.password) {
+            console.log("User not found or no password");
             return null;
         }
 
         const isVerified = await verifyPass(password, user.password);
+
+        console.log("isVerified:", isVerified);
 
         if (!isVerified) {
             return null;
