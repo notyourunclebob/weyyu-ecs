@@ -10,7 +10,16 @@ export const authOptions: NextAuthOptions = {
                 username: { label: "Username", type: "text" },
                 password: { label: "Password", type: "password" }
             },
+            // async authorize(credentials) {
+
+            //     if (!credentials?.username || !credentials?.password) {
+            //         throw new Error("Invalid credentials");
+            //     }
+
+            //     return nextAuthLogin(credentials);
+            // },
             async authorize(credentials) {
+                console.log("authorize called in production");
 
                 if (!credentials?.username || !credentials?.password) {
                     return null;
