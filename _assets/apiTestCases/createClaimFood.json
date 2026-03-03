@@ -1,0 +1,9 @@
+{
+    "employeeId": "EC#4861258765",
+    "receipt": "582918453217090.png",
+    "amount" : 300.85,
+    "description": "Crate of proteen supliments",
+    "category": {
+        "name": "Food"
+    }
+}

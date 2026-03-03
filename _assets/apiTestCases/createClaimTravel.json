@@ -1,0 +1,12 @@
+{
+    "employeeId": "EC#4861258765",
+    "receipt": "582918453217090.png",
+    "amount": 1500.50,
+    "description": "Return to Sea of Tranquility",
+    "category": {
+        "name": "Travel",
+        "locationStart": "San Francisco, California",
+        "locationEnd": "Sea of Tranquility, Moon",
+        "distanceKm": 363104
+    }
+}

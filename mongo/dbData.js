@@ -1,7 +1,6 @@
 db.employees.drop();
 db.employees.insert([
     {
-        "_id": "6983a3ccedac1851ff8ce5b0",
         "employeeId": "EC#9549874308",
         "firstName": "Meredith",
         "lastName": "Vickers",
@@ -10,7 +9,6 @@ db.employees.insert([
         "password": "$2a$12$mcre1cmb6I8PJYXU38qd/.staFwyZuR/SPOROtMwxjkBFvvzw.cNi"
     },
     {
-        "_id": "6983a3ccedac1851ff8ce5b1",
         "employeeId": "EC#4861258765",
         "firstName": "Idris",
         "lastName": "Janek",
@@ -23,22 +21,22 @@ db.employees.insert([
 db.claims.drop();
 db.claims.insert([
     {
-        "_id": "6994e612e3d875481c8ce5b0",
         "status": "open",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
         "description": "Purchase of Weyland Yutani personal medical pod (experimental)",
+        "amount": 40000.00,
         "category": {
             "name": "Medical",
             "faceHugger": false
         }
     },
     {
-        "_id": "6994e612e3d875481c8ce5b1",
         "status": "open",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
+        "amount": 15000.50,
         "category": {
             "name": "Travel",
             "locationStart": "Sea of Tranquility, Moon",
@@ -47,11 +45,11 @@ db.claims.insert([
         }
     },
     {
-        "_id": "6994f5e7c8d2b3c97c8ce5b0",
-        "status": "closed",
+        "status": "approved",
         "employeeId": "EC#4861258765",
         "receipt": "51456717090.png",
         "description": "Headache medicine",
+        "amount": 99.99,
         "category": {
             "name": "Medical",
             "faceHugger": false
