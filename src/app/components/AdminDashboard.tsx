@@ -1,7 +1,6 @@
 import { User } from "@/tools/user.model"
 import Link from "next/link"
 
-// { user }: { user: User }
 export default function AdminDashboard() {
     return (
         <div className="min-h-screen bg-yutaniGrey p-7">
