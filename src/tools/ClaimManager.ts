@@ -20,7 +20,7 @@ export async function getClaimsAll() {
 
         claimArray = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).find().toArray();
 
-        claimArray.forEach((claim:Claim) => claim._id = claim._id.toString());
+        claimArray.forEach((claim: Claim) => claim._id = claim._id.toString());
 
         return NextResponse.json(
             {
@@ -30,7 +30,7 @@ export async function getClaimsAll() {
             { status: 200 }
         );
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
@@ -87,37 +87,38 @@ export async function getClaimsEmployee(request: NextRequest) {
         mongoClient.close();
     }
 }
- /** 
-  * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
-  * @param request accepts json requests with the following format:
-  * {
-    "employeeId": "",
-    "receipt": "",
-    "amount": 0,
-    "description": "",
-    "category": {
-        "name": "",
-        // conditional data follows, do not include if not used by category
-        "locationStart": "",
-        "locationEnd": "",
-        "distanceKm": 0
-    }
+/** 
+ * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
+ * @param request accepts json requests with the following format:
+ * {
+   "employeeId": "",
+   "receipt": "",
+   "amount": 0,
+   "description": "",
+   "category": {
+       "name": "",
+       // conditional data follows, do not include if not used by category
+       "locationStart": "",
+       "locationEnd": "",
+       "distanceKm": 0
+   }
 }
- */
-export async function createClaim(request: NextRequest) {
+*/
+export async function createClaim(request: NextRequest, userId: string) {
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
         await mongoClient.connect();
 
-        const body:any = await request.json();
+        const body: any = await request.json();
 
         body.status = "open";
-        body.employeeId = sanitize(body.employeeId);
+        body.date = sanitize(body.date);
+        body.employeeId = userId;
         body.receipt = sanitize(body.receipt);
         body.amount = Number(sanitize(body.amount));
         body.description = sanitize(body.description);
-        body.category.name = sanitize(body.category.name);        
+        body.category.name = sanitize(body.category);
         if (body.category.name === "Travel") {
             body.category.locationStart = sanitize(body.category.locationStart);
             body.category.locationEnd = sanitize(body.category.locationEnd);
@@ -127,17 +128,17 @@ export async function createClaim(request: NextRequest) {
         let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).insertOne(body);
 
         return NextResponse.json(
-            { 
+            {
                 message: "New claim created",
-                result 
-            }, 
+                result
+            },
             { status: 200 }
         );
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
-        );        
+        );
     } finally {
         mongoClient.close();
     }
@@ -165,13 +166,13 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
         let newValue: Object = { $set: { status: status } };
         let result: UpdateResult = await claimCollection.updateOne(selector, newValue);
 
-        
+
         if (result.matchedCount <= 0) {
             let error = `Claim ${claimId} not found`;
 
             return NextResponse.json(
                 { error: error },
-                { status: 404 , statusText: error}
+                { status: 404, statusText: error }
             );
         } else {
             return NextResponse.json(
@@ -183,11 +184,11 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
             );
         }
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
-        );        
+        );
     } finally {
         mongoClient.close();
     }

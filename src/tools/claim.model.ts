@@ -2,10 +2,11 @@ export interface Claim {
     _id: string;
     status: string;
     employee_id: string;
+    date: Date;
     receipt: string;
     description: string;
-    amount:      number;
-    category:    Category;
+    amount: number;
+    category: Category;
 }
 
 export interface Category {

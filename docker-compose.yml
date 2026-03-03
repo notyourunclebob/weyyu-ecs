@@ -8,7 +8,7 @@ services:
     volumes:
       - data-volume:/data/db
     environment:
-      MONGO_INITDB_DATABASE: ecsDb
+      MONGO_INITDB_DATABASE: ecsdb
     ports:
       - "27017:27017"
     networks:
@@ -31,11 +31,12 @@ services:
     depends_on:
       - mongo
     networks:
-      - linkednetwork  
+      - linkednetwork
 
 volumes:
-    node_modules_app:
-    data-volume:
+  node_modules_app:
+  data-volume:
+
 
 networks:
   linkednetwork:

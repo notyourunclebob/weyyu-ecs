@@ -1,5 +1,6 @@
 'use client';
 
+import { sendJSONData } from '@/tools/Toolkit';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -52,10 +53,40 @@ export default function EmployeeClaimSystem() {
         router.push(`/dashboard`)
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        router.push(`/dashboard`)
+
+        let receiptUrl = null;
+        if (formData.receipt) {
+            const uniqueFileName = `${Date.now()}-${formData.receipt.name}`;
+            const renamedFile = new File([formData.receipt], uniqueFileName, { type: formData.receipt.type });
+
+            const fileData = new FormData();
+            fileData.append('file', renamedFile);
+
+            const receiptResponse = await fetch('/api/claim/receipt', {
+                method: 'POST',
+                body: fileData,
+            });
+
+            if (!receiptResponse.ok) {
+                console.error('Receipt upload failed:', receiptResponse.status, receiptResponse.statusText);
+                return;
+            }
+
+            const receiptResult = await receiptResponse.json();
+            receiptUrl = receiptResult.url;
+        }
+
+        await sendJSONData('/api/claim/create', {
+            date: formData.date,
+            category: formData.category,
+            amount: formData.amount,
+            description: formData.description,
+            receiptUrl,
+        });
+
+        router.push('/dashboard');
     };
 
     return (
