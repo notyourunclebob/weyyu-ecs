@@ -4,7 +4,8 @@ export interface Claim {
     employee_id: string;
     receipt: string;
     description: string;
-    category: Category;
+    amount:      number;
+    category:    Category;
 }
 
 export interface Category {

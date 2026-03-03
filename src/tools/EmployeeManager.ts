@@ -101,17 +101,14 @@ export async function updateEmployee(request: NextRequest, id: string) {
         // body.password = sanitize(body.password);
 
         let employeeCollection: Collection<Employee> = mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES);
-        let selector: Object = { "employeeId": employeeId };
-        let newValues: Object = {
-            $set: {
-                firstName: body.firstName,
-                lastName: body.lastName,
-                admin: body.admin
-            }
-        };
-        let result: UpdateResult = await employeeCollection.updateOne(selector, newValues);
+        let selector:Object = { "_id": employeeId };
+        let newValues:Object = { $set: { 
+            firstName: body.firstName, 
+            lastName: body.lastName, 
+            admin: body.admin } };
+        let result:UpdateResult = await employeeCollection.updateOne(selector, newValues);
 
-        if (result.matchedCount <= 0) {
+        if (result.matchedCount <= 0 ) {
             return NextResponse.json(
                 { error: "Employee id doesn't exist" },
                 { status: 404, statusText: "Employee id doesn't exist" }
