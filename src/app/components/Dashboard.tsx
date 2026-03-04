@@ -46,9 +46,9 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                     {/* pending claims go here */}
                                     {claimData.filter((claim: Claim) => claim.status === "open").map((claim: Claim) => (
                                         <div key={claim._id}>
-                                            <div>
-                                                Claim {claim._id}
-                                            </div>
+                                            <Link href="/claim">
+                                                {claim.description} - {claim.amount}
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
@@ -60,10 +60,10 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                 </div>
                                 <div className="bg-yutaniGrey rounded h-80 w-150">
                                     {/* approved claims go here */}
-                                    {claimData.filter((claim: Claim) => claim.status === "closed").map((claim: Claim) => (
+                                    {claimData.filter((claim: Claim) => claim.status === "approved").map((claim: Claim) => (
                                         <div key={claim._id}>
                                             <div>
-                                                Claim {claim._id}
+                                                {claim.description} - {claim.amount}
                                             </div>
                                         </div>
                                     ))}

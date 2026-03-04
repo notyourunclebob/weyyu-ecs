@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Header from "../components/Header";
 import { Claim } from "@/tools/claim.model";
 import { getServerSession } from "next-auth";
@@ -14,6 +16,8 @@ export default async function DashboardPage() {
   }
 
   let claims: Claim[] = [];
+  console.log("session.user.employeeId:", session.user.employeeId);
+  console.log("session.user.id:", session.user.id);
   if (session.user.admin) {
     const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/claim/getAll`);
     claims = data.claims;
