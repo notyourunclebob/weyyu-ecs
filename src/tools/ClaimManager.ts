@@ -1,4 +1,4 @@
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb";
+import { Collection, Filter, InsertOneResult, MongoClient, ObjectId, UpdateResult, WithId } from "mongodb";
 import { Claim } from "./claim.model";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
@@ -196,6 +196,41 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
             { error: error.message },
             { status: 500 }
         );
+    } finally {
+        mongoClient.close();
+    }
+}
+
+/**
+ * Queries the database for the claim associated with the claim id and employee id
+ * @param claim_id The id of the sought after claim
+ * @param employee_id The id of the user which the claim was made by
+ * @returns Claim data
+ * @author Drew MacEachern
+ */
+export async function getClaimById(claim_id: string, employee_id: string) {
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+
+        await mongoClient.connect();
+
+        let claimId: ObjectId = new ObjectId(claim_id.trim());
+
+        let selector: Filter<WithId<Claim>> = { "_id": claimId, "employeeId": employee_id };
+
+        const claim = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).findOne({ "_id": claimId });
+
+        console.log(claim?.employeeId)
+        if (!claim) {
+            return { error: "Not found or unauthorized" };
+        }
+
+        claim._id = claim._id.toString();
+        return claim;
+
+    } catch (error: any) {
+        return { error: error.message };
     } finally {
         mongoClient.close();
     }

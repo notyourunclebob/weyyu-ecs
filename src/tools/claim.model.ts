@@ -1,7 +1,9 @@
+import { ObjectId } from "mongodb";
+
 export interface Claim {
-    _id: string;
+    _id: string | ObjectId;
     status: string;
-    employee_id: string;
+    employeeId: string;
     date: Date;
     receipt: string;
     description: string;

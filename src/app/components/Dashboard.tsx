@@ -45,8 +45,8 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                 <div className="bg-yutaniGrey rounded h-80 w-150">
                                     {/* pending claims go here */}
                                     {claimData.filter((claim: Claim) => claim.status === "open").map((claim: Claim) => (
-                                        <div key={claim._id}>
-                                            <Link href="/claim">
+                                        <div key={claim._id.toString()}>
+                                            <Link href={`/claim/${claim._id}`}>
                                                 {claim.description} - {claim.amount}
                                             </Link>
                                         </div>
@@ -61,7 +61,7 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                 <div className="bg-yutaniGrey rounded h-80 w-150">
                                     {/* approved claims go here */}
                                     {claimData.filter((claim: Claim) => claim.status === "approved").map((claim: Claim) => (
-                                        <div key={claim._id}>
+                                        <div key={claim._id.toString()}>
                                             <div>
                                                 {claim.description} - {claim.amount}
                                             </div>

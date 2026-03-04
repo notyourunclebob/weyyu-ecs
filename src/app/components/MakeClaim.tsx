@@ -197,14 +197,14 @@ export default function EmployeeClaimSystem() {
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="px-12 py-3 bg-yutaniGrey border-2 border-yutaniGrey text-black font-light rounded hover:bg-yutaniGrey transition"
+                        className="px-12 py-3 bg-gray-300 border-2 border-gray-300 text-black font-light rounded hover:bg-gray-400 transition"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         onClick={handleSubmit}
-                        className="px-12 py-3 bg-yutaniYellow border-2 border-yellow-500 text-black font-bold rounded hover:bg-yellow-350 transition"
+                        className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
                     >
                         Submit
                     </button>
