@@ -1,42 +1,152 @@
 'use client';
 
 import { sendJSONData } from '@/tools/Toolkit';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+interface FormData {
+    date: string;
+    category: string;
+    amount: string;
+    description: string;
+    receipt: File | null;
+    facehugger: number;
+    startLocation: string;
+    endLocation: string;
+    mileage: string;
+}
+
+interface FormErrors {
+    date?: string;
+    category?: string;
+    amount?: string;
+    description?: string;
+    receipt?: string;
+    startLocation?: string;
+    endLocation?: string;
+    mileage?: string;
+}
+
 export default function EmployeeClaimSystem() {
     const router = useRouter();
+    const { data: session } = useSession();
 
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         date: '',
         category: '',
         amount: '',
         description: '',
-        receipt: null as File | null,
+        receipt: null,
+        facehugger: 1,
+        startLocation: '',
+        endLocation: '',
+        mileage: '',
     });
 
+    const [errors, setErrors] = useState<FormErrors>({});
     const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const validate = (data: FormData): FormErrors => {
+        const newErrors: FormErrors = {};
+
+        // Date validation
+        if (!data.date) {
+            newErrors.date = 'Date is required.';
+        } else {
+            const selected = new Date(data.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (selected > today) {
+                newErrors.date = 'Date cannot be in the future.';
+            }
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            if (selected < oneYearAgo) {
+                newErrors.date = 'Date cannot be more than one year ago.';
+            }
+        }
+
+        // Category validation
+        if (!data.category) {
+            newErrors.category = 'Please select a category.';
+        }
+
+        // Travel-specific validation
+        if (data.category === 'travel') {
+            if (!data.startLocation.trim()) {
+                newErrors.startLocation = 'Starting location is required for travel claims.';
+            }
+            if (!data.endLocation.trim()) {
+                newErrors.endLocation = 'Final location is required for travel claims.';
+            }
+            if (!data.mileage.trim()) {
+                newErrors.mileage = 'Mileage is required for travel claims.';
+            } else if (!/^\d+(\.\d+)?\s*(L\/100|Mpg|mpg|l\/100)/i.test(data.mileage.trim())) {
+                newErrors.mileage = 'Please include units — e.g. "8.5 L/100" or "30 Mpg".';
+            }
+        }
+
+        // Amount validation
+        if (!data.amount) {
+            newErrors.amount = 'Amount is required.';
+        } else {
+            const amt = parseFloat(data.amount);
+            if (isNaN(amt) || amt <= 0) {
+                newErrors.amount = 'Amount must be a positive number.';
+            } else if (amt > 50000) {
+                newErrors.amount = 'Amount exceeds the maximum claimable limit of $50,000.';
+            } else if (!/^\d+(\.\d{0,2})?$/.test(data.amount)) {
+                newErrors.amount = 'Amount can have at most 2 decimal places.';
+            }
+        }
+
+        // Description validation
+        if (!data.description.trim()) {
+            newErrors.description = 'Description is required.';
+        } else if (data.description.trim().length < 10) {
+            newErrors.description = 'Description must be at least 10 characters.';
+        } else if (data.description.trim().length > 500) {
+            newErrors.description = `Description is too long (${data.description.trim().length}/500 characters).`;
+        }
+
+        // Receipt validation — always required
+        if (!data.receipt) {
+            newErrors.receipt = 'A receipt is required.';
+        }
+
+        return newErrors;
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
+        // Clear the error for this field on change
+        if (errors[name as keyof FormErrors]) {
+            setErrors((prev) => ({ ...prev, [name]: undefined }));
+        }
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            setFormData((prev) => ({
-                ...prev,
-                receipt: file,
-            }));
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                setErrors((prev) => ({ ...prev, receipt: 'File size must be under 10MB.' }));
+                return;
+            }
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                setErrors((prev) => ({ ...prev, receipt: 'Only image files (JPG, PNG, GIF, WEBP) and PDFs are allowed.' }));
+                return;
+            }
+
+            setFormData((prev) => ({ ...prev, receipt: file }));
+            setErrors((prev) => ({ ...prev, receipt: undefined }));
 
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setReceiptPreview(reader.result as string);
-            };
+            reader.onloadend = () => setReceiptPreview(reader.result as string);
             reader.readAsDataURL(file);
         }
     };
@@ -48,59 +158,89 @@ export default function EmployeeClaimSystem() {
             amount: '',
             description: '',
             receipt: null,
+            facehugger: 1,
+            startLocation: '',
+            endLocation: '',
+            mileage: '',
         });
+        setErrors({});
         setReceiptPreview(null);
-        router.push(`/dashboard`)
+        router.push('/dashboard');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        let receiptUrl = null;
-        if (formData.receipt) {
-            const uniqueFileName = `${Date.now()}-${formData.receipt.name}`;
-            const renamedFile = new File([formData.receipt], uniqueFileName, { type: formData.receipt.type });
-
-            const fileData = new FormData();
-            fileData.append('file', renamedFile);
-
-            const receiptResponse = await fetch('/api/claim/receipt', {
-                method: 'POST',
-                body: fileData,
-            });
-
-            if (!receiptResponse.ok) {
-                console.error('Receipt upload failed:', receiptResponse.status, receiptResponse.statusText);
-                return;
-            }
-
-            const receiptResult = await receiptResponse.json();
-            receiptUrl = receiptResult.url;
+        const validationErrors = validate(formData);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            // Scroll to first error
+            const firstErrorField = Object.keys(validationErrors)[0];
+            document.getElementsByName(firstErrorField)[0]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
         }
 
-        await sendJSONData('/api/claim/create', {
-            date: formData.date,
-            category: formData.category,
-            amount: formData.amount,
-            description: formData.description,
-            receiptUrl,
-        });
+        setIsSubmitting(true);
 
-        router.push('/dashboard');
+        try {
+            let receiptUrl = null;
+            if (formData.receipt) {
+                const uniqueFileName = `${Date.now()}-${formData.receipt.name}`;
+                const renamedFile = new File([formData.receipt], uniqueFileName, { type: formData.receipt.type });
+
+                const fileData = new FormData();
+                fileData.append('file', renamedFile);
+
+                const receiptResponse = await fetch('/api/claim/receipt', {
+                    method: 'POST',
+                    body: fileData,
+                });
+
+                if (!receiptResponse.ok) {
+                    console.error('Receipt upload failed:', receiptResponse.status, receiptResponse.statusText);
+                    setErrors({ receipt: 'Receipt upload failed. Please try again.' });
+                    return;
+                }
+
+                const receiptResult = await receiptResponse.json();
+                receiptUrl = receiptResult.url;
+            }
+
+            await sendJSONData('/api/claim/create', {
+                date: formData.date,
+                category: formData.category,
+                amount: formData.amount,
+                description: formData.description,
+                receiptUrl,
+            });
+
+            router.push('/dashboard');
+        } catch (err) {
+            console.error('Submission error:', err);
+            setErrors({ description: 'Submission failed. Please try again.' });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+    const ErrorMessage = ({ message }: { message?: string }) =>
+        message ? <p className="text-red-400 text-xs mt-1">{message}</p> : null;
+
+    const inputClass = (field: keyof FormErrors) =>
+        `w-full px-4 py-3 bg-yutaniGrey border-2 rounded text-black placeholder-yutaniGrey focus:outline-none transition ${errors[field] ? 'border-red-400 focus:border-red-400' : 'border-yutaniGrey focus:border-yutaniYellow'
+        }`;
 
     return (
         <div className="min-h-screen bg-yutaniGrey p-7">
             <div className="bg-black rounded-2xl p-8 min-h-[calc(100vh-130px)]">
-                {/* Claim Information Title */}
                 <h2 className="text-yutaniGrey text-3xl font-light tracking-wider text-center mb-8">
                     Claim Information
                 </h2>
 
-                <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
+                <form onSubmit={handleSubmit} noValidate className="grid grid-cols-2 gap-8">
                     {/* Left Column */}
                     <div className="space-y-6">
-                        {/* Date Field */}
+                        {/* Date */}
                         <div>
                             <label className="block text-yutaniGrey text-sm mb-2 font-light">Date:</label>
                             <input
@@ -108,30 +248,85 @@ export default function EmployeeClaimSystem() {
                                 name="date"
                                 value={formData.date}
                                 onChange={handleInputChange}
-                                required
-                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
+                                className={inputClass('date')}
                             />
+                            <ErrorMessage message={errors.date} />
                         </div>
 
-                        {/* Category Field */}
+                        {/* Category */}
                         <div>
                             <label className="block text-yutaniGrey text-sm mb-2 font-light">Category:</label>
                             <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleInputChange}
-                                required
-                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black focus:outline-none focus:border-yutaniYellow"
+                                className={inputClass('category')}
                             >
                                 <option value="">Select a category</option>
-                                <option value="travel">Meals</option>
-                                <option value="meals">Travel</option>
+                                <option value="meals">Meals</option>
+                                <option value="travel">Travel</option>
                                 <option value="accommodation">Accommodation</option>
-                                <option value="supplies">Medical</option>
+                                <option value="medical">Medical</option>
                             </select>
+                            <ErrorMessage message={errors.category} />
                         </div>
 
-                        {/* Amount Field */}
+                        {/* Medical: facehugger checkbox */}
+                        {formData.category === 'medical' && (
+                            <div className="text-white">
+                                <input
+                                    type="checkbox"
+                                    id="medCheckbox"
+                                    value={formData.facehugger}
+                                    onChange={handleInputChange}
+                                />
+                                <label className="pl-2">Facehugger exposure?</label>
+                            </div>
+                        )}
+
+                        {/* Travel: location + mileage fields */}
+                        {formData.category === 'travel' && (
+                            <div className="flex flex-col gap-2">
+                                <div className="flex flex-col">
+                                    <label className="block text-yutaniGrey text-sm mb-2 font-light">Starting Location</label>
+                                    <input
+                                        type="text"
+                                        name="startLocation"
+                                        className={inputClass('startLocation')}
+                                        value={formData.startLocation}
+                                        onChange={handleInputChange}
+                                    />
+                                    <ErrorMessage message={errors.startLocation} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="block text-yutaniGrey text-sm mb-2 font-light">Final Location</label>
+                                    <input
+                                        type="text"
+                                        name="endLocation"
+                                        className={inputClass('endLocation')}
+                                        value={formData.endLocation}
+                                        onChange={handleInputChange}
+                                    />
+                                    <ErrorMessage message={errors.endLocation} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <label className="block text-yutaniGrey text-sm mb-2 font-light">
+                                        Mileage — Please specify units (L/100, Mpg)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="mileage"
+                                        placeholder="e.g. 8.5 L/100 or 30 Mpg"
+                                        className={inputClass('mileage')}
+                                        value={formData.mileage}
+                                        onChange={handleInputChange}
+                                    />
+                                    <ErrorMessage message={errors.mileage} />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Amount */}
                         <div>
                             <label className="block text-yutaniGrey text-sm mb-2 font-light">Amount:</label>
                             <input
@@ -141,30 +336,42 @@ export default function EmployeeClaimSystem() {
                                 onChange={handleInputChange}
                                 placeholder="0.00"
                                 step="0.01"
-                                required
-                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
+                                min="0.01"
+                                className={inputClass('amount')}
                             />
+                            <ErrorMessage message={errors.amount} />
                         </div>
 
-                        {/* Description Field */}
+                        {/* Description */}
                         <div>
-                            <label className="block text-yutaniGrey text-sm mb-2 font-light">Description:</label>
+                            <label className="block text-yutaniGrey text-sm mb-2 font-light">
+                                Description:
+                                <span className="ml-2 text-yutaniGrey opacity-60 text-xs">
+                                    ({formData.description.length}/500)
+                                </span>
+                            </label>
                             <textarea
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
-                                required
                                 rows={6}
-                                className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow resize-none"
+                                maxLength={500}
+                                className={`${inputClass('description')} resize-none`}
                             />
+                            <ErrorMessage message={errors.description} />
                         </div>
                     </div>
 
-                    {/* Right Column - Receipt Upload */}
+                    {/* Right Column — Receipt Upload */}
                     <div className="flex flex-col">
-                        <label className="block text-yutaniGrey text-sm mb-2 font-light">Add a receipt:</label>
+                        <label className="block text-yutaniGrey text-sm mb-2 font-light">
+                            Add a receipt: <span className="text-red-400">*</span>
+                        </label>
                         <div
-                            className="flex-1 bg-yutaniGrey border-2 border-yutaniGrey rounded p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-yutaniGrey transition"
+                            className={`flex-1 border-2 rounded p-6 flex flex-col items-center justify-center cursor-pointer transition ${errors.receipt
+                                    ? 'bg-yutaniGrey border-red-400'
+                                    : 'bg-yutaniGrey border-yutaniGrey hover:border-yutaniYellow'
+                                }`}
                             onClick={() => document.getElementById('receipt-input')?.click()}
                         >
                             {receiptPreview ? (
@@ -177,10 +384,16 @@ export default function EmployeeClaimSystem() {
                                 </div>
                             ) : (
                                 <div className="text-center">
-                                    <div className="text-yutaniGrey text-sm font-light">Click to upload receipt image</div>
+                                    <div className="text-yutaniGrey text-sm font-light">
+                                        Click to upload receipt image
+                                    </div>
+                                    <div className="text-yutaniGrey opacity-50 text-xs mt-1">
+                                        JPG, PNG, WEBP, PDF · max 10MB
+                                    </div>
                                 </div>
                             )}
                         </div>
+                        <ErrorMessage message={errors.receipt} />
                         <input
                             id="receipt-input"
                             type="file"
@@ -197,16 +410,18 @@ export default function EmployeeClaimSystem() {
                     <button
                         type="button"
                         onClick={handleCancel}
-                        className="px-12 py-3 bg-gray-300 border-2 border-gray-300 text-black font-light rounded hover:bg-gray-400 transition"
+                        disabled={isSubmitting}
+                        className="px-12 py-3 bg-gray-300 border-2 border-gray-300 text-black font-light rounded hover:bg-gray-400 transition disabled:opacity-50"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         onClick={handleSubmit}
-                        className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
+                        disabled={isSubmitting}
+                        className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Submit
+                        {isSubmitting ? 'Submitting…' : 'Submit'}
                     </button>
                 </div>
             </div>
