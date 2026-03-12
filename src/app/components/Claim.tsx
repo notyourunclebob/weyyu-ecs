@@ -3,9 +3,38 @@
 import { Claim } from "@/tools/claim.model";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { sendJSONData } from "@/tools/Toolkit";
 
 export function ClaimComp({ claim }: { claim: Claim }) {
     const router = useRouter();
+    const { data: session } = useSession();
+
+    const onApprove = async () => {
+        const result = await sendJSONData(`/api/claim/updateStatus/${claim._id}`, { status: "approved" }, "PUT")
+        if (result === null) {
+            return;
+        }
+
+        const { data, status } = result;
+
+        if (status === 200) {
+            router.push('/dashboard')
+        }
+    }
+
+    const onDeny = async () => {
+        const result = await sendJSONData(`/api/claim/updateStatus/${claim._id}`, { status: "denied" }, "PUT")
+        if (result === null) {
+            return;
+        }
+
+        const { data, status } = result;
+
+        if (status === 200) {
+            router.push('/dashboard')
+        }
+    }
     return (
         <div>
             <div className="min-h-screen bg-yutaniGrey p-7">
@@ -87,13 +116,26 @@ export function ClaimComp({ claim }: { claim: Claim }) {
                         >
                             Back
                         </button>
-                        <button
-                            type="submit"
-                            onClick={() => router.push('/dashboard')}
-                            className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
-                        >
-                            Submit
-                        </button>
+                        {session?.user?.admin && claim.status === "open" &&
+                            <div>
+
+                                <button
+                                    type="submit"
+                                    onClick={onApprove}
+                                    className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
+                                >
+                                    Approve
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    onClick={onDeny}
+                                    className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
+                                >
+                                    Deny
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
 

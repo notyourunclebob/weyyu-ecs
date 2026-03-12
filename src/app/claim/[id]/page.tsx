@@ -17,7 +17,9 @@ export default async function ClaimPage({ params }: { params: { id: string } }) 
     const isAdmin = session.user.admin;
     const { id } = await params;
 
-    const result = await getClaimById(id, session.user.employeeId);
+    console.log(id);
+
+    const result = await getClaimById(id);
 
     if ("error" in result) {
         console.log(result.error)

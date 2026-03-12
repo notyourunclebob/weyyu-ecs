@@ -208,7 +208,7 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
  * @returns Claim data
  * @author Drew MacEachern
  */
-export async function getClaimById(claim_id: string, employee_id: string) {
+export async function getClaimById(claim_id: string) {
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
@@ -217,11 +217,8 @@ export async function getClaimById(claim_id: string, employee_id: string) {
 
         let claimId: ObjectId = new ObjectId(claim_id.trim());
 
-        let selector: Filter<WithId<Claim>> = { "_id": claimId, "employeeId": employee_id };
-
         const claim = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).findOne({ "_id": claimId });
 
-        console.log(claim?.employeeId)
         if (!claim) {
             return { error: "Not found or unauthorized" };
         }
