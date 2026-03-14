@@ -6,8 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
     const session = await getServerSession(authOptions);
 
-    console.log("Session:", JSON.stringify(session, null, 2));
-
     if (!session?.user?.employeeId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -12,7 +12,6 @@ export const authOptions: NextAuthOptions = {
             },
 
             async authorize(credentials) {
-                console.log("authorize called in production");
 
                 if (!credentials?.username || !credentials?.password) {
                     return null;

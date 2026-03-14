@@ -105,7 +105,6 @@ export async function getClaimsEmployee(request: NextRequest) {
 }
 */
 export async function createClaim(request: NextRequest, userId: string) {
-    console.log("createClaim reached");
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
@@ -113,7 +112,6 @@ export async function createClaim(request: NextRequest, userId: string) {
 
         const body: any = await request.json();
 
-        console.log("request recieved");
 
         body.status = "open";
         body.date = sanitize(body.date);
@@ -128,11 +126,7 @@ export async function createClaim(request: NextRequest, userId: string) {
         //     body.category.distanceKm = Number(sanitize(body.category.distanceKm));
         // };
 
-        console.log("json built");
-
         let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).insertOne(body);
-
-        console.log("claim added");
 
         return NextResponse.json(
             {

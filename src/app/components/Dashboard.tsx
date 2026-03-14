@@ -9,7 +9,6 @@ export default function Dashboard(claims: { claims: Claim[] }) {
     // the session data from login can be used for conditional rendering
     const { data: session } = useSession();
     const [claimData, setClaimData] = useState<Claim[]>(claims.claims)
-    console.log(claimData);
 
     if (!session) {
         return <div>Loading...</div>;
