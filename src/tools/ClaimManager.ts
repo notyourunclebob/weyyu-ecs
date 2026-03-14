@@ -1,4 +1,4 @@
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb";
+import { Collection, Filter, InsertOneResult, MongoClient, ObjectId, UpdateResult, WithId } from "mongodb";
 import { Claim } from "./claim.model";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
@@ -20,7 +20,7 @@ export async function getClaimsAll() {
 
         claimArray = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).find().toArray();
 
-        claimArray.forEach((claim:Claim) => claim._id = claim._id.toString());
+        claimArray.forEach((claim: Claim) => claim._id = claim._id.toString());
 
         return NextResponse.json(
             {
@@ -30,7 +30,7 @@ export async function getClaimsAll() {
             { status: 200 }
         );
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
@@ -87,31 +87,33 @@ export async function getClaimsEmployee(request: NextRequest) {
         mongoClient.close();
     }
 }
- /** 
-  * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
-  * @param request accepts json requests with the following format:
-  * {
-    "employeeId": "",
-    "receipt": "",
-    "amount": 0,
-    "description": "",
-    "comment": "",
-    "category": {
-        "name": "",
-        // conditional data follows, do not include if not used by category
-        "locationStart": "",
-        "locationEnd": "",
-        "distanceKm": 0
-    }
+/** 
+ * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
+ * @param request accepts json requests with the following format:
+ * {
+   "employeeId": "",
+   "receipt": "",
+   "amount": 0,
+   "description": "",
+   "category": {
+       "name": "",
+       // conditional data follows, do not include if not used by category
+       "locationStart": "",
+       "locationEnd": "",
+       "distanceKm": 0
+   }
 }
- */
-export async function createClaim(request: NextRequest) {
+*/
+export async function createClaim(request: NextRequest, userId: string) {
+    console.log("createClaim reached");
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
         await mongoClient.connect();
 
-        const body:any = await request.json();
+        const body: any = await request.json();
+
+        console.log("request recieved");
 
         body.date = new Date();
         console.log(body.date);
@@ -120,27 +122,31 @@ export async function createClaim(request: NextRequest) {
         body.receipt = sanitize(body.receipt);
         body.amount = Number(sanitize(body.amount));
         body.description = sanitize(body.description);
-        body.category.name = sanitize(body.category.name);        
-        if (body.category.name === "Travel") {
-            body.category.locationStart = sanitize(body.category.locationStart);
-            body.category.locationEnd = sanitize(body.category.locationEnd);
-            body.category.distanceKm = Number(sanitize(body.category.distanceKm));
-        };
+        body.category = sanitize(body.category);
+        // if (body.category.name === "Travel") {
+        //     body.category.locationStart = sanitize(body.category.locationStart);
+        //     body.category.locationEnd = sanitize(body.category.locationEnd);
+        //     body.category.distanceKm = Number(sanitize(body.category.distanceKm));
+        // };
+
+        console.log("json built");
 
         let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).insertOne(body);
 
+        console.log("claim added");
+
         return NextResponse.json(
-            { 
+            {
                 message: "New claim created",
-                result 
-            }, 
+                result
+            },
             { status: 200 }
         );
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
-        );        
+        );
     } finally {
         mongoClient.close();
     }
@@ -169,13 +175,13 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
         let newValue: Object = { $set: { status: status, coment: comment } };
         let result: UpdateResult = await claimCollection.updateOne(selector, newValue);
 
-        
+
         if (result.matchedCount <= 0) {
             let error = `Claim ${claimId} not found`;
 
             return NextResponse.json(
                 { error: error },
-                { status: 404 , statusText: error}
+                { status: 404, statusText: error }
             );
         } else {
             return NextResponse.json(
@@ -187,11 +193,43 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
             );
         }
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
-        );        
+        );
+    } finally {
+        mongoClient.close();
+    }
+}
+
+/**
+ * Queries the database for the claim associated with the claim id and employee id
+ * @param claim_id The id of the sought after claim
+ * @param employee_id The id of the user which the claim was made by
+ * @returns Claim data
+ * @author Drew MacEachern
+ */
+export async function getClaimById(claim_id: string) {
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+
+        await mongoClient.connect();
+
+        let claimId: ObjectId = new ObjectId(claim_id.trim());
+
+        const claim = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).findOne({ "_id": claimId });
+
+        if (!claim) {
+            return { error: "Not found or unauthorized" };
+        }
+
+        claim._id = claim._id.toString();
+        return claim;
+
+    } catch (error: any) {
+        return { error: error.message };
     } finally {
         mongoClient.close();
     }
