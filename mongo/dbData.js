@@ -21,7 +21,7 @@ db.employees.insert([
 db.claims.drop();
 db.claims.insert([
     {
-        "status": "open",
+        "status": "pending",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124890.png",
         "description": "Purchase of Weyland Yutani personal medical pod (experimental)",
@@ -32,7 +32,7 @@ db.claims.insert([
         }
     },
     {
-        "status": "open",
+        "status": "pending",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217090.png",
         "description": "Visit to US headquarters",
@@ -48,11 +48,12 @@ db.claims.insert([
         "status": "approved",
         "employeeId": "EC#4861258765",
         "receipt": "51456717090.png",
-        "description": "Headache medicine",
+        "description": "Stomach medicine",
         "amount": 99.99,
+        "comment": "Game over man",
         "category": {
             "name": "Medical",
-            "faceHugger": false
+            "faceHugger": true
         }
     }
 ]);
