@@ -87,25 +87,25 @@ export async function getClaimsEmployee(request: NextRequest) {
         mongoClient.close();
     }
 }
-/** 
- * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
- * @param request accepts json requests with the following format:
- * {
-   "employeeId": "",
-   "receipt": "",
-   "amount": 0,
-   "description": "",
-   "category": {
-       "name": "",
-       // conditional data follows, do not include if not used by category
-       "locationStart": "",
-       "locationEnd": "",
-       "distanceKm": 0
-   }
+ /** 
+  * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
+  * @param request accepts json requests with the following format:
+  * {
+    "employeeId": "",
+    "receipt": "",
+    "amount": 0,
+    "description": "",
+    "comment": "",
+    "category": {
+        "name": "",
+        // conditional data follows, do not include if not used by category
+        "locationStart": "",
+        "locationEnd": "",
+        "distanceKm": 0
+    }
 }
 */
 export async function createClaim(request: NextRequest, userId: string) {
-    console.log("createClaim reached");
     let mongoClient: MongoClient = new MongoClient(URL);
 
     try {
@@ -113,7 +113,6 @@ export async function createClaim(request: NextRequest, userId: string) {
 
         const body: any = await request.json();
 
-        console.log("request recieved");
 
         body.date = new Date();
         console.log(body.date);
@@ -129,11 +128,7 @@ export async function createClaim(request: NextRequest, userId: string) {
         //     body.category.distanceKm = Number(sanitize(body.category.distanceKm));
         // };
 
-        console.log("json built");
-
         let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).insertOne(body);
-
-        console.log("claim added");
 
         return NextResponse.json(
             {

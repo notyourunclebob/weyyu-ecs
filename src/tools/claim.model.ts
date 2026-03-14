@@ -1,14 +1,15 @@
 import { ObjectId } from "mongodb";
 
 export interface Claim {
-    _id: string | ObjectId;
-    status: string;
-    employeeId: string;
-    date: Date;
-    receipt: string;
+    _id:         string;
+    status:      string;
+    employeeId:  string;
+    receipt:     string;
     description: string;
-    amount: number;
-    category: Category;
+    comment?:    string;
+    amount:      number;
+    category:    Category;
+    date:        Date;
 }
 
 export interface Category {
