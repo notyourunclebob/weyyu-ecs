@@ -5,7 +5,7 @@ import sanitize from "sanitize-html";
 
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsdb";
+const DB_NAME: string = "ecsDb";
 const COLLECTION_CLAIMS: string = "claims";
 
 /** 
@@ -115,10 +115,11 @@ export async function createClaim(request: NextRequest, userId: string) {
 
         console.log("request recieved");
 
-        body.status = "open";
-        body.date = sanitize(body.date);
-        body.employeeId = userId;
-        body.receipt = sanitize(body.receiptUrl);
+        body.date = new Date();
+        console.log(body.date);
+        body.status = "pending";
+        body.employeeId = sanitize(body.employeeId);
+        body.receipt = sanitize(body.receipt);
         body.amount = Number(sanitize(body.amount));
         body.description = sanitize(body.description);
         body.category = sanitize(body.category);
@@ -154,7 +155,7 @@ export async function createClaim(request: NextRequest, userId: string) {
 /** 
  * Changes claim status based on submitted request
  * @param request accepts json requests with the following format:
- * { status: "" }
+ * { status: "", comment: "" }
  * @param id used to serch db for a matching object id
 */
 export async function changeClaimStatus(request: NextRequest, id: string) {
@@ -167,10 +168,11 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
 
         const body: any = await request.json();
         const status = sanitize(body.status);
+        const comment = sanitize(body.comment);
 
         let claimCollection: Collection<Claim> = mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
         let selector: Object = { "_id": claimId };
-        let newValue: Object = { $set: { status: status } };
+        let newValue: Object = { $set: { status: status, coment: comment } };
         let result: UpdateResult = await claimCollection.updateOne(selector, newValue);
 
 

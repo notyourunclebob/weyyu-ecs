@@ -12,9 +12,9 @@ export interface Claim {
 }
 
 export interface Category {
-    name: string;
-    faceHugger?: boolean;
+    name:           string;
+    faceHugger?:    boolean;
     locationStart?: string;
-    locationEnd?: string;
-    distanceKm?: number;
+    locationEnd?:   string;
+    distanceKm?:    number;
 }
