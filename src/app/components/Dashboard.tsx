@@ -23,11 +23,11 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                     </div>
                     {session.user.admin === true ?
                         <div className="flex flex-col md:flex-row justify-around text-yutaniGrey">
-                            <Link href="/addUser" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
+                            <Link href="/manageUsers" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
                                 Manage Users
                             </Link>
-                            <Link href="/editCategories" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
-                                Edit Categories
+                            <Link href="/manageCategories" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
+                                Manage Categories
                             </Link>
                             <Link href="/viewReport" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
                                 View Reports
@@ -43,7 +43,7 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                 </div>
                                 <div className="bg-yutaniGrey rounded h-80 w-100">
                                     {/* pending claims go here */}
-                                    {claimData.filter((claim: Claim) => claim.status === "open").map((claim: Claim) => (
+                                    {claimData.filter((claim: Claim) => claim.status === "pending").map((claim: Claim) => (
                                         <div key={claim._id.toString()} className="pl-1">
                                             <Link href={`/claim/${claim._id}`}>
                                                 {claim.description} - {claim.amount}
