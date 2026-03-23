@@ -16,7 +16,7 @@ export default async function Home() {
 
     let categories: CategoryBase[] = [];
 
-    const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, false);
+    const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, 0);
     categories = data.categories;
 
     return (

@@ -5,7 +5,6 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CategoryBase } from '@/tools/categoryBase.model';
-import { Category } from '@/tools/claim.model';
 
 interface FormData {
     date: string;
