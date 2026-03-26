@@ -1,4 +1,4 @@
-import { Collection, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb";
+import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
 import { Employee } from "./employee.model";
@@ -169,6 +169,47 @@ export async function updateEmployee(request: NextRequest, id: string) {
             );
         }
     } catch (error: any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    } finally {
+        mongoClient.close();
+    }
+}
+
+export async function deleteEmployee(request: NextRequest) {
+
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        await mongoClient.connect();
+
+        const body = await request.json();
+
+        let id: ObjectId = new ObjectId(sanitize(body._id));
+
+        let selector: Object = { "_id": id };
+
+        let result: DeleteResult = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).deleteOne(selector);
+
+        if (result.deletedCount <= 0) {
+            let error = `Employee _id: ${id} failed to delete`
+                return NextResponse.json(
+                    { error:  error },
+                    { status: 500, statusText: error }
+                );
+        } else {
+                return NextResponse.json(
+                    {
+                        message: `Employee _id: ${id} successfully deleted`,
+                        result
+                    },
+                    { status: 200 }
+                );
+            }   
+
+    } catch(error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
