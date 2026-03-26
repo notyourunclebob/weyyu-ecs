@@ -1,8 +1,8 @@
-import { Collection, MongoClient, ObjectId, UpdateResult } from "mongodb";
+import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, UpdateResult } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
 import { Employee } from "./employee.model";
-import { verifyPass } from "./PassTools";
+import { hashPass, verifyPass } from "./PassTools";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
 const DB_NAME: string = "ecsdb";
@@ -35,7 +35,7 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
         }
 
         return {
-            id: user._id.toString(),
+            id: user._id!.toString(),
             employeeId: user.employeeId,
             firstName: user.firstName,
             lastName: user.lastName,
@@ -44,6 +44,49 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
 
     } catch (error: any) {
         throw error;
+    } finally {
+        mongoClient.close();
+    }
+}
+
+export async function createEmployee(request: NextRequest) {
+
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        await mongoClient.connect();
+
+        const body = await request.json();
+
+        body.employeeId = sanitize(body.employeeId);
+        body.firstName = sanitize(body.firstName);
+        body.lastName =  sanitize(body.lastName);
+        body.password = sanitize(body.password);
+
+        let hashedPass: string = await hashPass(body.password);
+
+        let newEmployee: Employee = {
+            employeeId: body.employeeId,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            admin: body.admin,
+            password: hashedPass,
+        }
+
+        let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).insertOne(newEmployee);
+
+        return NextResponse.json(
+            {
+                message:"New employee added",
+                result,
+            },
+            { status: 200 }
+        );
+    } catch(error:any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
     } finally {
         mongoClient.close();
     }
@@ -63,7 +106,7 @@ export async function getEmployees() {
 
         employeeArray = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).find().toArray();
 
-        employeeArray.forEach((employee: Employee) => employee._id = employee._id.toString());
+        employeeArray.forEach((employee: Employee) => employee._id = employee._id!.toString());
     } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
@@ -126,6 +169,47 @@ export async function updateEmployee(request: NextRequest, id: string) {
             );
         }
     } catch (error: any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    } finally {
+        mongoClient.close();
+    }
+}
+
+export async function deleteEmployee(request: NextRequest) {
+
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        await mongoClient.connect();
+
+        const body = await request.json();
+
+        let id: ObjectId = new ObjectId(sanitize(body._id));
+
+        let selector: Object = { "_id": id };
+
+        let result: DeleteResult = await mongoClient.db(DB_NAME).collection<Employee>(COLLECTION_EMPLOYEES).deleteOne(selector);
+
+        if (result.deletedCount <= 0) {
+            let error = `Employee _id: ${id} failed to delete`
+                return NextResponse.json(
+                    { error:  error },
+                    { status: 500, statusText: error }
+                );
+        } else {
+                return NextResponse.json(
+                    {
+                        message: `Employee _id: ${id} successfully deleted`,
+                        result
+                    },
+                    { status: 200 }
+                );
+            }   
+
+    } catch(error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
