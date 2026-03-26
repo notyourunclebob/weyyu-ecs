@@ -5,7 +5,7 @@ import sanitize from "sanitize-html";
 import { Claim } from "./claim.model";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsDb";
+const DB_NAME: string = "ecsdb";
 const COLLECTION_CLAIMS: string = "claims";
 const COLLECTION_CATEGORIES: string = "categories";
 
