@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
-import { ClaimComp } from "../../components/Claim";
 import Header from "../../components/Header";
 import { getServerSession } from "next-auth";
-import { getClaimById } from "@/tools/ClaimManager";
-import { Claim } from "@/tools/claim.model";
 import { authOptions } from "@/lib/auth";
+import { getCategoryById } from "@/tools/CategoryManager";
+import { CategoryBase } from "@/tools/categoryBase.model";
+import { Category } from "@/tools/claim.model";
+import EditCategory from "@/app/components/EditCategory";
 
 export default async function ClaimPage({ params }: { params: { id: string } }) {
     const session = await getServerSession(authOptions);
@@ -16,23 +17,24 @@ export default async function ClaimPage({ params }: { params: { id: string } }) 
     const isAdmin = session.user.admin;
     const { id } = await params;
 
+    if (!isAdmin) {
+        redirect('/login');
+    }
 
-    const result = await getClaimById(id);
+    const response = await getCategoryById(id);
+    const result = await response.json();
 
     if ("error" in result) {
         redirect('/error');
     }
 
-    const claim = result as Claim;
-
-    if (!isAdmin && claim?.employeeId !== session.user.employeeId) {
-        redirect('/unauthorized');
-    }
+    const category = result.categories as CategoryBase;
 
     return (
         <div>
             <Header />
-            <ClaimComp claim={claim} />
+            <EditCategory category={category} />
+
         </div>
     );
 }

@@ -45,8 +45,9 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                                     {/* pending claims go here */}
                                     {claimData.filter((claim: Claim) => claim.status === "pending").map((claim: Claim) => (
                                         <div key={claim._id.toString()} className="pl-1">
-                                            <Link href={`/claim/${claim._id}`}>
-                                                {claim.description} - {claim.amount}
+                                            {claim.description} - {claim.amount}
+                                            <Link href={`/claim/${claim._id}`} className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
+                                                View Claim
                                             </Link>
                                         </div>
                                     ))}

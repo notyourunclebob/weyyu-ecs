@@ -102,7 +102,7 @@ export default function ManageCategories({ categories }: { categories: { categor
                                     {category.name}
                                     <div className="flex flex-row ">
                                         <div className="px-2">
-                                            <Link href={`/claim/${category._id}`}>
+                                            <Link href={`/editCategory/${category._id}`}>
                                                 <FaPencilAlt />
                                             </Link>
                                         </div>
