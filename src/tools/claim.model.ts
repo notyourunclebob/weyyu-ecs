@@ -17,5 +17,5 @@ export interface Category {
     faceHugger?: boolean;
     locationStart?: string;
     locationEnd?: string;
-    distanceKm?: number;
+    mileage?: string;
 }

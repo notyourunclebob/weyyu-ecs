@@ -114,19 +114,21 @@ export async function createClaim(request: NextRequest, userId: string) {
         const body: any = await request.json();
 
 
-        body.date = new Date();
-        console.log(body.date);
+        body.date = sanitize(body.date);
         body.status = "pending";
-        body.employeeId = sanitize(body.employeeId);
-        body.receipt = sanitize(body.receipt);
+        body.employeeId = sanitize(userId);
+        body.receipt = sanitize(body.receiptUrl);
         body.amount = Number(sanitize(body.amount));
         body.description = sanitize(body.description);
         body.category = sanitize(body.category);
-        // if (body.category.name === "Travel") {
-        //     body.category.locationStart = sanitize(body.category.locationStart);
-        //     body.category.locationEnd = sanitize(body.category.locationEnd);
-        //     body.category.distanceKm = Number(sanitize(body.category.distanceKm));
-        // };
+        if (body.category === "Travel") {
+            console.log("in travel if");
+            body.locationStart = sanitize(body.startLocation);
+            body.locationEnd = sanitize(body.endLocation);
+            body.mileage = sanitize(body.mileage);
+        } else if (body.category === "Medical") {
+            body.faceHugger = sanitize(body.facehugger);
+        };
 
         let result: InsertOneResult = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS).insertOne(body);
 
