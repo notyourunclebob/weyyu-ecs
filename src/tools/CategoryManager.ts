@@ -2,6 +2,7 @@ import { Collection, DeleteResult, InsertOneResult, MongoClient, ObjectId, Updat
 import { CategoryBase } from "./categoryBase.model";
 import { NextRequest, NextResponse } from "next/server";
 import sanitize from "sanitize-html";
+import { Claim } from "./claim.model";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
 const DB_NAME: string = "ecsdb";
@@ -148,12 +149,26 @@ export async function deleteCategory(request: NextRequest) {
 
         let categoryId: ObjectId = new ObjectId(sanitize(body._id));
         let categoryCollection: Collection<CategoryBase> = mongoClient.db(DB_NAME).collection<CategoryBase>(COLLECTION_CATEGORIES);
-        let selector: Object = { "_id": categoryId };
-        let result: any = await categoryCollection.findOne(selector);
+        let categorySelector: Object = { "_id": categoryId };
+        let categoryResult: any = await categoryCollection.findOne(categorySelector);
+        
+        // check if category is in use
+        let claimsCollection: Collection<Claim> = mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
+        let claimSelector: any = { "status": "pending", "category": { "name": categoryResult.name }};
+        let claimResult: any = await claimsCollection.findOne(claimSelector);
+        console.log(claimResult);
 
-        if (result && result.allowChange == true) {
-            let deleteResult: DeleteResult = await categoryCollection.deleteOne(selector);
+        if (claimResult != null && claimResult.status == "pending") {
+            let error = `Category _id: ${categoryId}, ${categoryResult.name} is used by a pending claim and cannot be deleted`
 
+            return NextResponse.json(
+                { error:  error },
+                { status: 500, statusText: error }
+            );
+
+        } else if (categoryResult && categoryResult.allowChange == true) {
+            let deleteResult: DeleteResult = await categoryCollection.deleteOne(categorySelector);
+    
             if (deleteResult.deletedCount <= 0) {
                 let error = `Category _id: ${categoryId} failed to delete`
                 return NextResponse.json(
@@ -163,15 +178,15 @@ export async function deleteCategory(request: NextRequest) {
             } else {
                 return NextResponse.json(
                     {
-                        message: `Category _id: ${categoryId} successfully deleted`,
+                        message: `Category _id: ${categoryId}, ${categoryResult.name} successfully deleted`,
                         deleteResult
                     },
                     { status: 200 }
                 );
             }
 
-        } else if (result && result.allowChange == false) {
-            let error = `Category _id: ${categoryId}, ${result.name} cannot be deleted`
+        } else if (categoryResult && categoryResult.allowChange == false) {
+            let error = `Category _id: ${categoryId}, ${categoryResult.name} cannot be deleted`
             return NextResponse.json(
                 { error: error },
                 { status: 500, statusText: error }
