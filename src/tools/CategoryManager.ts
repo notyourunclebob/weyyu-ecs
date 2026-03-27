@@ -5,8 +5,7 @@ import sanitize from "sanitize-html";
 import { Claim } from "./claim.model";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsDb";
-const COLLECTION_CLAIMS: string = "claims";
+const DB_NAME: string = "ecsdb";
 const COLLECTION_CATEGORIES: string = "categories";
 
 /** 
@@ -33,11 +32,11 @@ export async function getCategories() {
     }
 
     return NextResponse.json(
-    {
-        message: "Categories accessed",
-        categories: categoryArray
-    },
-    { status: 200 }
+        {
+            message: "Categories accessed",
+            categories: categoryArray
+        },
+        { status: 200 }
     );
 }
 
@@ -74,7 +73,7 @@ export async function createCategory(request: NextRequest) {
         );
     } finally {
         mongoClient.close();
-    }    
+    }
 }
 
 /** 
@@ -95,11 +94,11 @@ export async function editCategory(request: NextRequest, id: string) {
         let selector: Object = { "_id": categoryId };
         let result: any = await categoryCollection.findOne(selector);
 
-        if ( result && result.allowChange == true) {
+        if (result && result.allowChange == true) {
             const body: any = await request.json();
             const name = sanitize(body.name);
 
-            let newValue: Object = { $set: { name: name }};
+            let newValue: Object = { $set: { name: name } };
             let updatResult: UpdateResult = await categoryCollection.updateOne(selector, newValue);
 
             return NextResponse.json(
@@ -110,10 +109,10 @@ export async function editCategory(request: NextRequest, id: string) {
                 { status: 200 }
             );
 
-        } else if ( result && result.allowChange == false) {
+        } else if (result && result.allowChange == false) {
             let error = `Category _id: ${categoryId}, ${result.name} cannot be changed`
             return NextResponse.json(
-                { error:  error },
+                { error: error },
                 { status: 500, statusText: error }
             );
 
@@ -125,11 +124,11 @@ export async function editCategory(request: NextRequest, id: string) {
             );
         }
 
-    } catch (error:any) {
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }
-        );        
+        );
     } finally {
         mongoClient.close();
     }
@@ -142,7 +141,7 @@ export async function editCategory(request: NextRequest, id: string) {
 */
 export async function deleteCategory(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
-    
+
     try {
         await mongoClient.connect();
 
@@ -173,7 +172,7 @@ export async function deleteCategory(request: NextRequest) {
             if (deleteResult.deletedCount <= 0) {
                 let error = `Category _id: ${categoryId} failed to delete`
                 return NextResponse.json(
-                    { error:  error },
+                    { error: error },
                     { status: 500, statusText: error }
                 );
             } else {
@@ -184,12 +183,12 @@ export async function deleteCategory(request: NextRequest) {
                     },
                     { status: 200 }
                 );
-            }   
+            }
 
         } else if (categoryResult && categoryResult.allowChange == false) {
             let error = `Category _id: ${categoryId}, ${categoryResult.name} cannot be deleted`
             return NextResponse.json(
-                { error:  error },
+                { error: error },
                 { status: 500, statusText: error }
             );
 
@@ -202,7 +201,7 @@ export async function deleteCategory(request: NextRequest) {
 
         }
 
-    } catch (error: any){
+    } catch (error: any) {
         return NextResponse.json(
             { error: error.message },
             { status: 500 }

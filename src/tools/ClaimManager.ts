@@ -5,7 +5,7 @@ import sanitize from "sanitize-html";
 
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
-const DB_NAME: string = "ecsDb";
+const DB_NAME: string = "ecsdb";
 const COLLECTION_CLAIMS: string = "claims";
 
 /** 
@@ -87,22 +87,22 @@ export async function getClaimsEmployee(request: NextRequest) {
         mongoClient.close();
     }
 }
- /** 
-  * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
-  * @param request accepts json requests with the following format:
-  * {
-    "employeeId": "",
-    "receipt": "",
-    "amount": 0,
-    "description": "",
-    "comment": "",
-    "category": {
-        "name": "",
-        // conditional data follows, do not include if not used by category
-        "locationStart": "",
-        "locationEnd": "",
-        "distanceKm": 0
-    }
+/** 
+ * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
+ * @param request accepts json requests with the following format:
+ * {
+   "employeeId": "",
+   "receipt": "",
+   "amount": 0,
+   "description": "",
+   "comment": "",
+   "category": {
+       "name": "",
+       // conditional data follows, do not include if not used by category
+       "locationStart": "",
+       "locationEnd": "",
+       "distanceKm": 0
+   }
 }
 */
 export async function createClaim(request: NextRequest, userId: string) {

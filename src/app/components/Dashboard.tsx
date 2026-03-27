@@ -24,13 +24,13 @@ export default function Dashboard(claims: { claims: Claim[] }) {
                     {session.user.admin === true ?
                         <div className="flex flex-col md:flex-row justify-around text-yutaniGrey">
                             <Link href="/addUser" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
-                                Add User
+                                Manage Users
                             </Link>
                             <Link href="/editCategories" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
                                 Edit Categories
                             </Link>
                             <Link href="/viewReport" className="bg-yutaniYellow text-black px-8 py-3 font-semibold rounded hover:bg-yellow-500">
-                                View Report
+                                View Reports
                             </Link>
                         </div>
                         : <div className="hidden"></div>}
