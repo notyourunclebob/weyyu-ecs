@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { authOptions } from "@/lib/auth";
 import { getJSONData } from "@/tools/Toolkit";
 import { getServerSession } from "next-auth";
@@ -17,7 +19,7 @@ export default async function manageUsers() {
 
     let categories: CategoryBase[] = [];
 
-    const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, false);
+    const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, 0);
     categories = data.categories;
 
     return (

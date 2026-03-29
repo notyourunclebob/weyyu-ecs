@@ -210,3 +210,44 @@ export async function deleteCategory(request: NextRequest) {
         mongoClient.close();
     }
 }
+/**
+ * Takes a category id and returns the category object
+ * @param id the id of the requested category
+ * @returns category object
+ * @author Drew MacEachern
+ */
+export async function getCategoryById(id: string) {
+    let mongoClient: MongoClient = new MongoClient(URL);
+    let categoryId: ObjectId = new ObjectId(sanitize(id));
+    let result: any;
+
+    try {
+        await mongoClient.connect();
+
+        let categoryCollection: Collection<CategoryBase> = mongoClient
+            .db(DB_NAME)
+            .collection<CategoryBase>(COLLECTION_CATEGORIES);
+
+        let selector: Object = { "_id": categoryId };
+        result = await categoryCollection.findOne(selector);
+
+        if (result) {
+            result._id = result._id.toString();
+        }
+    } catch (error: any) {
+        return NextResponse.json(
+            { error: error.message },
+            { status: 500 }
+        );
+    } finally {
+        mongoClient.close();
+    }
+
+    return NextResponse.json(
+        {
+            message: "Category accessed",
+            categories: result
+        },
+        { status: 200 }
+    );
+}
