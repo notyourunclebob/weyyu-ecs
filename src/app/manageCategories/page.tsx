@@ -1,13 +1,16 @@
-import { getServerSession } from "next-auth";
-import Header from "../components/Header";
-import MakeClaim from "../components/MakeClaim";
+export const dynamic = 'force-dynamic';
+
 import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { getJSONData } from "@/tools/Toolkit";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import Header from "../components/Header";
+import ManageCategories from "../components/ManageCategories";
 import { CategoryBase } from "@/tools/categoryBase.model";
 
 
-export default async function Home() {
+
+export default async function manageUsers() {
     const session = await getServerSession(authOptions);
 
     if (!session) {
@@ -20,9 +23,9 @@ export default async function Home() {
     categories = data.categories;
 
     return (
-        <div className="w-screen h-screen bg-yutaniGrey">
+        <div>
             <Header />
-            <MakeClaim categories={{ categories: categories }} />
+            <ManageCategories categories={{ categories: categories }} />
         </div>
-    );
+    )
 }

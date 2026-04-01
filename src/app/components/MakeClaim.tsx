@@ -4,6 +4,7 @@ import { sendJSONData } from '@/tools/Toolkit';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { CategoryBase } from '@/tools/categoryBase.model';
 
 interface FormData {
     date: string;
@@ -11,7 +12,7 @@ interface FormData {
     amount: string;
     description: string;
     receipt: File | null;
-    facehugger: number;
+    facehugger: boolean;
     startLocation: string;
     endLocation: string;
     mileage: string;
@@ -28,7 +29,7 @@ interface FormErrors {
     mileage?: string;
 }
 
-export default function EmployeeClaimSystem() {
+export default function EmployeeClaimSystem({ categories }: { categories: { categories: CategoryBase[] } }) {
     const router = useRouter();
     const { data: session } = useSession();
 
@@ -38,7 +39,7 @@ export default function EmployeeClaimSystem() {
         amount: '',
         description: '',
         receipt: null,
-        facehugger: 1,
+        facehugger: false,
         startLocation: '',
         endLocation: '',
         mileage: '',
@@ -74,7 +75,7 @@ export default function EmployeeClaimSystem() {
         }
 
         // Travel-specific validation
-        if (data.category === 'travel') {
+        if (data.category === 'Travel') {
             if (!data.startLocation.trim()) {
                 newErrors.startLocation = 'Starting location is required for travel claims.';
             }
@@ -158,7 +159,7 @@ export default function EmployeeClaimSystem() {
             amount: '',
             description: '',
             receipt: null,
-            facehugger: 1,
+            facehugger: false,
             startLocation: '',
             endLocation: '',
             mileage: '',
@@ -206,13 +207,22 @@ export default function EmployeeClaimSystem() {
                 receiptUrl = receiptResult.url;
             }
 
-            await sendJSONData('/api/claim/create', {
+            const jsonData = {
                 date: formData.date,
                 category: formData.category,
                 amount: formData.amount,
                 description: formData.description,
                 receiptUrl,
-            });
+                ...(formData.category === "Medical" && {
+                    facehugger: formData.facehugger,
+                }),
+                ...(formData.category === "Travel" && {
+                    startLocation: formData.startLocation,
+                    endLocation: formData.endLocation,
+                    mileage: formData.mileage,
+                }),
+            };
+            await sendJSONData('/api/claim/create', jsonData);
 
             router.push('/dashboard');
         } catch (err) {
@@ -263,29 +273,30 @@ export default function EmployeeClaimSystem() {
                                 className={inputClass('category')}
                             >
                                 <option value="">Select a category</option>
-                                <option value="meals">Meals</option>
-                                <option value="travel">Travel</option>
-                                <option value="accommodation">Accommodation</option>
-                                <option value="medical">Medical</option>
+                                {categories.categories.map((category) => (
+                                    <option key={category._id} value={category.name}>
+                                        {category.name}
+                                    </option>
+                                ))}
                             </select>
                             <ErrorMessage message={errors.category} />
                         </div>
 
                         {/* Medical: facehugger checkbox */}
-                        {formData.category === 'medical' && (
+                        {formData.category === 'Medical' && (
                             <div className="text-white">
                                 <input
                                     type="checkbox"
                                     id="medCheckbox"
-                                    value={formData.facehugger}
-                                    onChange={handleInputChange}
+                                    checked={formData.facehugger}
+                                    onChange={(e) => setFormData((prev) => ({ ...prev, facehugger: e.target.checked }))}
                                 />
                                 <label className="pl-2">Facehugger exposure?</label>
                             </div>
                         )}
 
                         {/* Travel: location + mileage fields */}
-                        {formData.category === 'travel' && (
+                        {formData.category === 'Travel' && (
                             <div className="flex flex-col gap-2">
                                 <div className="flex flex-col">
                                     <label className="block text-yutaniGrey text-sm mb-2 font-light">Starting Location</label>
@@ -369,8 +380,8 @@ export default function EmployeeClaimSystem() {
                         </label>
                         <div
                             className={`flex-1 border-2 rounded p-6 flex flex-col items-center justify-center cursor-pointer transition ${errors.receipt
-                                    ? 'bg-yutaniGrey border-red-400'
-                                    : 'bg-yutaniGrey border-yutaniGrey hover:border-yutaniYellow'
+                                ? 'bg-yutaniGrey border-red-400'
+                                : 'bg-yutaniGrey border-yutaniGrey hover:border-yutaniYellow'
                                 }`}
                             onClick={() => document.getElementById('receipt-input')?.click()}
                         >

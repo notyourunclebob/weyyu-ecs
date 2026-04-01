@@ -68,6 +68,58 @@ export function ClaimComp({ claim }: { claim: Claim }) {
                                     className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
                                 />
                             </div>
+                            {/* Medical: facehugger checkbox */}
+                            {claim.category.toString() === 'Medical' && (
+                                <div className="text-white flex flex-row pl-2">
+                                    <input
+                                        type="checkbox"
+                                        id="medCheckbox"
+                                        checked={claim.facehugger}
+                                        className="select-none ms-2 text-sm font-medium text-fg-disabled"
+                                        disabled
+                                    />
+                                    <label className="pl-2">Facehugger exposure?</label>
+                                </div>
+                            )}
+
+                            {/* Travel: location + mileage fields */}
+                            {claim.category.toString() === 'Travel' && (
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col">
+                                        <label className="block text-yutaniGrey text-sm mb-2 font-light">Starting Location</label>
+                                        <input
+                                            type="text"
+                                            name="startLocation"
+                                            className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
+                                            value={claim.locationStart}
+                                            disabled
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label className="block text-yutaniGrey text-sm mb-2 font-light">Final Location</label>
+                                        <input
+                                            type="text"
+                                            name="endLocation"
+                                            className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
+                                            value={claim.locationEnd}
+                                            disabled
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <label className="block text-yutaniGrey text-sm mb-2 font-light">
+                                            Mileage — Please specify units (L/100, Mpg)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="mileage"
+                                            placeholder="e.g. 8.5 L/100 or 30 Mpg"
+                                            className="w-full px-4 py-3 bg-yutaniGrey border-2 border-yutaniGrey rounded text-black placeholder-yutaniGrey focus:outline-none focus:border-yutaniYellow"
+                                            value={claim.mileage}
+                                            disabled
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Amount Field */}
                             <div>
@@ -116,7 +168,7 @@ export function ClaimComp({ claim }: { claim: Claim }) {
                         >
                             Back
                         </button>
-                        {session?.user?.admin && claim.status === "open" &&
+                        {session?.user?.admin && claim.status === "pending" &&
                             <div>
 
                                 <button
@@ -130,7 +182,7 @@ export function ClaimComp({ claim }: { claim: Claim }) {
                                 <button
                                     type="submit"
                                     onClick={onDeny}
-                                    className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition"
+                                    className="px-12 py-3 bg-yellow-400 border-2 border-yellow-300 text-black font-bold rounded hover:bg-yellow-500 transition ml-2"
                                 >
                                     Deny
                                 </button>
