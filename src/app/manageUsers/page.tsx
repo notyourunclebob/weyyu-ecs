@@ -16,14 +16,14 @@ export default async function manageUsers() {
 
     let employees: Employee[] = [];
     if (session.user.admin) {
-        const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/employee/get`, false);
+        const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/employee/get`, 0);
         employees = data.employees;
     }
 
     return (
         <div>
             <Header />
-            <ManageUsers />
+            <ManageUsers employees={employees} />
         </div>
     )
 }

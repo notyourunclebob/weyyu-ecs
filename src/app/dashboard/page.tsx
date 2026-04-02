@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/auth";
 import { getJSONData, sendJSONData } from "@/tools/Toolkit";
 import Dashboard from "../components/Dashboard";
 import { redirect } from "next/navigation";
+import { CategoryBase } from "@/tools/categoryBase.model";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -25,10 +26,15 @@ export default async function DashboardPage() {
     claims = data?.data.claims;
   }
 
+  let categories: CategoryBase[] = [];
+
+  const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, 0);
+  categories = data.categories;
+
   return (
     <div>
       <Header />
-      <Dashboard claims={claims} />
+      <Dashboard claims={claims} categories={categories} />
     </div>
   );
 }
