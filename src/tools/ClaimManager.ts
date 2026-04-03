@@ -169,7 +169,7 @@ export async function changeClaimStatus(request: NextRequest, id: string) {
 
         let claimCollection: Collection<Claim> = mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
         let selector: Object = { "_id": claimId };
-        let newValue: Object = { $set: { status: status, coment: comment } };
+        let newValue: Object = { $set: { status: status, comment: comment } };
         let result: UpdateResult = await claimCollection.updateOne(selector, newValue);
 
 

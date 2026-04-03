@@ -65,7 +65,7 @@ export default function Dashboard({ claims, categories }: { claims: Claim[]; cat
                                     {filteredClaims?.filter((claim: Claim) => claim.status === "pending").map((claim: Claim) => (
                                         <div key={claim._id.toString()} className="pl-2 pt-2">
                                             {claim.description.length > 10 ? `${claim.description.slice(0, 10)}...` : claim.description} - ${claim.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                            <Link href={`/claim/${claim._id}`} className="bg-yutaniYellow text-black rounded hover:bg-yellow-500 px-2 py-1 ml-2">
+                                            <Link href={`/claim/${claim._id}`} className="text-black rounded px-2 py-1 ml-2 underline hover:opacity-70">
                                                 View Claim
                                             </Link>
                                         </div>
@@ -81,7 +81,7 @@ export default function Dashboard({ claims, categories }: { claims: Claim[]; cat
                                     {filteredClaims?.filter((claim: Claim) => claim.status === "approved").map((claim: Claim) => (
                                         <div key={claim._id.toString()} className="pl-1">
                                             {claim.description.length > 10 ? `${claim.description.slice(0, 10)}...` : claim.description} - ${claim.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                            <Link href={`/claim/${claim._id}`} className="bg-yutaniYellow text-black rounded hover:bg-yellow-500 px-2 py-1 ml-2">
+                                            <Link href={`/claim/${claim._id}`} className="text-black rounded px-2 py-1 ml-2 underline hover:opacity-70">
                                                 View Claim
                                             </Link>
                                         </div>
@@ -97,7 +97,7 @@ export default function Dashboard({ claims, categories }: { claims: Claim[]; cat
                                     {filteredClaims?.filter((claim: Claim) => claim.status === "denied").map((claim: Claim) => (
                                         <div key={claim._id.toString()} className="pl-1">
                                             {claim.description.length > 10 ? `${claim.description.slice(0, 10)}...` : claim.description} - ${claim.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                            <Link href={`/claim/${claim._id}`} className="bg-yutaniYellow text-black rounded hover:bg-yellow-500 px-2 py-1 ml-2">
+                                            <Link href={`/claim/${claim._id}`} className="text-black rounded px-2 py-1 ml-2 underline hover:opacity-70">
                                                 View Claim
                                             </Link>
                                         </div>

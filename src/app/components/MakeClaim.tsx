@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { CategoryBase } from '@/tools/categoryBase.model';
+import { Employee } from '@/tools/employee.model';
 
 interface FormData {
     date: string;
@@ -27,9 +28,10 @@ interface FormErrors {
     startLocation?: string;
     endLocation?: string;
     mileage?: string;
+    employee?: string;
 }
 
-export default function EmployeeClaimSystem({ categories }: { categories: { categories: CategoryBase[] } }) {
+export default function EmployeeClaimSystem({ categories, employees }: { categories: { categories: CategoryBase[] }, employees: Employee[] }) {
     const router = useRouter();
     const { data: session } = useSession();
 
@@ -45,6 +47,7 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
         mileage: '',
     });
 
+    const [selectedEmployee, setSelectedEmployee] = useState<string>('');
     const [errors, setErrors] = useState<FormErrors>({});
     const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,7 +55,11 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
     const validate = (data: FormData): FormErrors => {
         const newErrors: FormErrors = {};
 
-        // Date validation
+        // Admin must select an employee
+        if (session?.user.admin && !selectedEmployee) {
+            newErrors.employee = 'Please select an employee to submit on behalf of.';
+        }
+
         if (!data.date) {
             newErrors.date = 'Date is required.';
         } else {
@@ -69,12 +76,10 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
             }
         }
 
-        // Category validation
         if (!data.category) {
             newErrors.category = 'Please select a category.';
         }
 
-        // Travel-specific validation
         if (data.category === 'Travel') {
             if (!data.startLocation.trim()) {
                 newErrors.startLocation = 'Starting location is required for travel claims.';
@@ -89,7 +94,6 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
             }
         }
 
-        // Amount validation
         if (!data.amount) {
             newErrors.amount = 'Amount is required.';
         } else {
@@ -103,7 +107,6 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
             }
         }
 
-        // Description validation
         if (!data.description.trim()) {
             newErrors.description = 'Description is required.';
         } else if (data.description.trim().length < 10) {
@@ -112,7 +115,6 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
             newErrors.description = `Description is too long (${data.description.trim().length}/500 characters).`;
         }
 
-        // Receipt validation — always required
         if (!data.receipt) {
             newErrors.receipt = 'A receipt is required.';
         }
@@ -123,7 +125,6 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
-        // Clear the error for this field on change
         if (errors[name as keyof FormErrors]) {
             setErrors((prev) => ({ ...prev, [name]: undefined }));
         }
@@ -132,7 +133,7 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const maxSize = 10 * 1024 * 1024; // 10MB
+            const maxSize = 10 * 1024 * 1024;
             if (file.size > maxSize) {
                 setErrors((prev) => ({ ...prev, receipt: 'File size must be under 10MB.' }));
                 return;
@@ -164,6 +165,7 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
             endLocation: '',
             mileage: '',
         });
+        setSelectedEmployee('');
         setErrors({});
         setReceiptPreview(null);
         router.push('/dashboard');
@@ -175,7 +177,6 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
         const validationErrors = validate(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            // Scroll to first error
             const firstErrorField = Object.keys(validationErrors)[0];
             document.getElementsByName(firstErrorField)[0]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
@@ -213,6 +214,7 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
                 amount: formData.amount,
                 description: formData.description,
                 receiptUrl,
+                ...(session?.user.admin && { onBehalfOf: selectedEmployee }),
                 ...(formData.category === "Medical" && {
                     facehugger: formData.facehugger,
                 }),
@@ -250,6 +252,31 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
                 <form onSubmit={handleSubmit} noValidate className="grid grid-cols-2 gap-8">
                     {/* Left Column */}
                     <div className="space-y-6">
+
+                        {/* Admin: Employee selector */}
+                        {session?.user.admin && (
+                            <div>
+                                <label className="block text-yutaniGrey text-sm mb-2 font-light">Submit on behalf of:</label>
+                                <select
+                                    name="employee"
+                                    value={selectedEmployee}
+                                    onChange={(e) => {
+                                        setSelectedEmployee(e.target.value);
+                                        if (errors.employee) setErrors((prev) => ({ ...prev, employee: undefined }));
+                                    }}
+                                    className={inputClass('employee')}
+                                >
+                                    <option value="">Select an employee</option>
+                                    {employees.filter((employee: Employee) => !employee.admin).map((employee) => (
+                                        <option key={employee._id} value={employee._id}>
+                                            {employee.firstName} {employee.lastName}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ErrorMessage message={errors.employee} />
+                            </div>
+                        )}
+
                         {/* Date */}
                         <div>
                             <label className="block text-yutaniGrey text-sm mb-2 font-light">Date:</label>
@@ -321,9 +348,7 @@ export default function EmployeeClaimSystem({ categories }: { categories: { cate
                                     <ErrorMessage message={errors.endLocation} />
                                 </div>
                                 <div className="flex flex-col">
-                                    <label className="block text-yutaniGrey text-sm mb-2 font-light">
-                                        Mileage — Please specify units (L/100, Mpg)
-                                    </label>
+                                    <label className="block text-yutaniGrey text-sm mb-2 font-light">Distance</label>
                                     <input
                                         type="text"
                                         name="mileage"
