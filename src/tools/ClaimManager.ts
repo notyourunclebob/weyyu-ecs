@@ -121,6 +121,7 @@ export async function createClaim(request: NextRequest, userId: string) {
         body.amount = Number(sanitize(body.amount));
         body.description = sanitize(body.description);
         body.category = sanitize(body.category);
+        body.acknowledged = false;
         if (body.category === "Travel") {
             console.log("in travel if");
             body.locationStart = sanitize(body.startLocation);
@@ -227,6 +228,38 @@ export async function getClaimById(claim_id: string) {
 
     } catch (error: any) {
         return { error: error.message };
+    } finally {
+        mongoClient.close();
+    }
+}
+
+/**
+ * Sets acknowledged to true for all provided claim IDs
+ * @param claimIds Array of claim _id strings to acknowledge
+ */
+export async function acknowledgeClaims(claimIds: string[]) {
+    let mongoClient: MongoClient = new MongoClient(URL);
+
+    try {
+        await mongoClient.connect();
+
+        const objectIds = claimIds.map((id) => new ObjectId(sanitize(id)));
+
+        const result = await mongoClient
+            .db(DB_NAME)
+            .collection<Claim>(COLLECTION_CLAIMS)
+            .updateMany(
+                { _id: { $in: objectIds } },
+                { $set: { acknowledged: true } }
+            );
+
+        return NextResponse.json(
+            { message: `${result.modifiedCount} claim(s) acknowledged`, result },
+            { status: 200 }
+        );
+
+    } catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
     } finally {
         mongoClient.close();
     }

@@ -21,20 +21,26 @@ export default async function DashboardPage() {
     const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/claim/getAll`, false);
     claims = data.claims;
   } else {
-    const employeeData = { employeeId: session.user.employeeId }
-    const data = await sendJSONData(`${process.env.NEXTAUTH_URL}/api/claim/getByEmployee`, employeeData)
+    const employeeData = { employeeId: session.user.employeeId };
+    const data = await sendJSONData(`${process.env.NEXTAUTH_URL}/api/claim/getByEmployee`, employeeData);
     claims = data?.data.claims;
   }
 
   let categories: CategoryBase[] = [];
+  const categoryData = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, 0);
+  categories = categoryData.categories;
 
-  const data = await getJSONData(`${process.env.NEXTAUTH_URL}/api/category/getAll`, 0);
-  categories = data.categories;
+  let unacknowledgedClaims: Claim[] = [];
+  if (!session.user.admin) {
+    unacknowledgedClaims = (claims ?? []).filter(
+      (claim: Claim) => !claim.acknowledged && claim.status !== "pending"
+    );
+  }
 
   return (
     <div>
       <Header />
-      <Dashboard claims={claims} categories={categories} />
+      <Dashboard claims={claims} categories={categories} unacknowledgedClaims={unacknowledgedClaims} />
     </div>
   );
 }

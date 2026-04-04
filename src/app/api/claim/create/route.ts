@@ -13,12 +13,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { onBehalfOf, ...rest } = body;
 
+    const syntheticRequest = new NextRequest(request.url, {
+        method: 'POST',
+        body: JSON.stringify(rest),
+        headers: { 'Content-Type': 'application/json' },
+    });
+
     if (onBehalfOf) {
         if (!session.user.admin) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
-        return await createClaim(rest, onBehalfOf);
+        return await createClaim(syntheticRequest, onBehalfOf);
     }
 
-    return await createClaim(rest, session.user.employeeId);
+    return await createClaim(syntheticRequest, session.user.employeeId);
 }
