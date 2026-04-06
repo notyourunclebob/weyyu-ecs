@@ -10,5 +10,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    return await createClaim(request, session.user.employeeId);
+    const body = await request.json();
+    const { onBehalfOf, ...rest } = body;
+
+    const syntheticRequest = new NextRequest(request.url, {
+        method: 'POST',
+        body: JSON.stringify(rest),
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (onBehalfOf) {
+        if (!session.user.admin) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+        return await createClaim(syntheticRequest, onBehalfOf);
+    }
+
+    return await createClaim(syntheticRequest, session.user.employeeId);
 }

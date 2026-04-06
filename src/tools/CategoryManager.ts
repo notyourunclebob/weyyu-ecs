@@ -152,10 +152,10 @@ export async function deleteCategory(request: NextRequest) {
         let categoryCollection: Collection<CategoryBase> = mongoClient.db(DB_NAME).collection<CategoryBase>(COLLECTION_CATEGORIES);
         let categorySelector: Object = { "_id": categoryId };
         let categoryResult: any = await categoryCollection.findOne(categorySelector);
-        
+
         // check if category is in use
         let claimsCollection: Collection<Claim> = mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
-        let claimSelector: any = { "status": "pending", "category": { "name": categoryResult.name }};
+        let claimSelector: any = { "status": "pending", "category": { "name": categoryResult.name } };
         let claimResult: any = await claimsCollection.findOne(claimSelector);
         console.log(claimResult);
 
@@ -163,13 +163,13 @@ export async function deleteCategory(request: NextRequest) {
             let error = `Category _id: ${categoryId}, ${categoryResult.name} is used by a pending claim and cannot be deleted`
 
             return NextResponse.json(
-                { error:  error },
+                { error: error },
                 { status: 500, statusText: error }
             );
 
         } else if (categoryResult && categoryResult.allowChange == true) {
             let deleteResult: DeleteResult = await categoryCollection.deleteOne(categorySelector);
-    
+
             if (deleteResult.deletedCount <= 0) {
                 let error = `Category _id: ${categoryId} failed to delete`
                 return NextResponse.json(

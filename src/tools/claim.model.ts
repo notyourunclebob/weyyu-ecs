@@ -10,6 +10,7 @@ export interface Claim {
     amount: number;
     category: Category;
     date: Date;
+    acknowledged?: Boolean;
 }
 
 export interface Category {
