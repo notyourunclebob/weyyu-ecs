@@ -26,6 +26,7 @@ export async function getFullReport() {
             total: { $sum: 1 },
             pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
             approved: { $sum: { $cond: [{ $eq: ["$status", "approved"] }, 1, 0] } },
+            denied: { $sum: { $cond: [{ $eq: ["$status", "denied"] }, 1, 0] } },
             pendingExpense: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] } },
             approvedExpense: { $sum: { $cond: [{ $eq: ["$status", "approved"] }, "$amount", 0] } },
             },
@@ -48,6 +49,13 @@ export async function getFullReport() {
                 { $round: [{ $multiply: [{ $divide: ["$approved", "$total"] }, 100] }, 0] },
                 ],
             },
+            deniedPercent: {
+                $cond: [
+                { $eq: ["$total", 0] },
+                0,
+                { $round: [{ $multiply: [{ $divide: ["$denied", "$total"] }, 100] }, 0] },
+                ],
+            },
             },
         },
 
@@ -58,6 +66,7 @@ export async function getFullReport() {
             totalClaims:         { $sum: "$total" },
             totalPending:        { $sum: "$pending" },
             totalApproved:       { $sum: "$approved" },
+            totalDenied:         { $sum: "$denied" },
             totalPendingExpense:  { $sum: "$pendingExpense" },
             totalApprovedExpense: { $sum: "$approvedExpense" },
             categoryData: {
@@ -66,10 +75,12 @@ export async function getFullReport() {
                 total:           "$total",
                 pending:         "$pending",
                 approved:        "$approved",
+                denied:          "$denied",
                 pendingExpense:  "$pendingExpense",
                 approvedExpense: "$approvedExpense",
                 pendingPercent:  "$pendingPercent",
                 approvedPercent: "$approvedPercent",
+                deniedPercent:   "$deniedPercent",
                 },
             },
             },
@@ -109,6 +120,7 @@ export async function getFullReport() {
             totalClaims:   1,
             totalPending:  1,
             totalApproved: 1,
+            totalDenied:   1,
             totalPendingExpense:  1,
             totalApprovedExpense: 1,
             totalPendingPercent: {
@@ -125,13 +137,20 @@ export async function getFullReport() {
                     { $round: [{ $multiply: [{ $divide: ["$totalApproved", "$totalClaims"] }, 100] }, 0] },
                 ],
             },
+            totalDeniedPercent: {
+                $cond: [
+                    { $eq: ["$totalClaims", 0] },
+                    0,
+                    { $round: [{ $multiply: [{ $divide: ["$totalDenied", "$totalClaims"] }, 100] }, 0] },
+                ],
+            },
             timestamp:    1,
             categoryData: 1,
             },
         },
         ];
 
-        const [report]: [Report] = await collection.aggregate<Report>(pipeline).toArray();
+        const [report]: Report[] = await collection.aggregate<Report>(pipeline).toArray();
 
         if (!report) {
             let error = "Failed to generate Report"

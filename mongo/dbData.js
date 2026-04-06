@@ -124,7 +124,7 @@ db.claims.insert([
         "category": { "name": "Lodging" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#9549874308",
         "receipt": "489104590124894.png",
         "description": "Personal wine collection transport",
@@ -174,7 +174,7 @@ db.claims.insert([
         "category": { "name": "Food" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#4861258765",
         "receipt": "582918453217093.png",
         "description": "Geology equipment cleaning after cave incident",
@@ -224,7 +224,7 @@ db.claims.insert([
         "category": { "name": "Food" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#3312847651",
         "receipt": "331284765105.png",
         "description": "Cat carrier and pet supplies (Jones)",
@@ -274,7 +274,7 @@ db.claims.insert([
         "category": { "name": "Food" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#7823456190",
         "receipt": "782345619005.png",
         "description": "Speeding fine on Luna highway",
@@ -324,7 +324,7 @@ db.claims.insert([
         "category": { "name": "Lodging" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#5541237809",
         "receipt": "554123780905.png",
         "description": "Personal firearms cleaning kit",
@@ -374,7 +374,7 @@ db.claims.insert([
         "category": { "name": "Lodging" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#6698321470",
         "receipt": "669832147005.png",
         "description": "Advanced chess set",
@@ -424,7 +424,7 @@ db.claims.insert([
         "category": { "name": "Food" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#2234789056",
         "receipt": "223478905605.png",
         "description": "Hazard suit repair (personal damage)",
@@ -474,7 +474,7 @@ db.claims.insert([
         "category": { "name": "Travel", "locationStart": "USCSS Prometheus", "locationEnd": "LV-223 Engineer Site", "distanceKm": 1200 }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#8867345219",
         "receipt": "886734521905.png",
         "description": "Holographic portrait commission",
@@ -524,7 +524,7 @@ db.claims.insert([
         "category": { "name": "Lodging" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#1198456732",
         "receipt": "119845673205.png",
         "description": "Flute and music sheet procurement",
@@ -574,7 +574,7 @@ db.claims.insert([
         "category": { "name": "Food" }
     },
     {
-        "status": "rejected",
+        "status": "denied",
         "employeeId": "EC#4456123987",
         "receipt": "445612398705.png",
         "description": "Replacement doll (Casey)",

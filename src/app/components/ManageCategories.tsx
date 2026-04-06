@@ -1,4 +1,4 @@
-"use client";
+[]"use client";
 
 import { FaPencilAlt } from "react-icons/fa";
 import { FaPlus, FaTrashCan } from "react-icons/fa6";

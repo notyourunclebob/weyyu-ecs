@@ -3,4 +3,24 @@
 @theme {
     --color-yutaniYellow: #FFD302;
     --color-yutaniGrey: #C8C8C8;
+
+    /* colours for the category breakdown bar chart */
+    --color-bar-total: #6366f1;
+    --color-bar-pending: #22d3ee;
+    --color-bar-approved: #f59e0b;
+    --color-bar-denied: #10b981;
+
+    /* colours for the expenses breakdown chart */
+    --color-expense-approved: #6366f1;
+    --color-expense-pending: #22d3ee;
+}
+
+.pdf-safe {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+.pdf-safe * {
+  color: inherit !important;
+  background-color: inherit !important;
 }
