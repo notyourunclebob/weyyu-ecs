@@ -1,7 +1,8 @@
 import { MongoClient } from "mongodb";
-import { Report, ReportCategory } from "./repot.model";
+import { Report } from "./repot.model";
 import { Claim } from "./claim.model";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import sanitize from "sanitize-html";
 
 const URL: string = process.env.DB_URL || "mongodb://mongo:27017/";
 const DB_NAME: string = "ecsdb";
@@ -10,16 +11,30 @@ const COLLECTION_CLAIMS: string = "claims";
 /** 
  * Generates a report of claims total expenses and statuses ommiting denied claims. Also generates reports per claim category.
 */
-export async function getFullReport() {
+export async function getFullReport(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
-
+    const dateMatch: Record<string, any> = {};
+        
     try {
         await mongoClient.connect();
+
+        // optionally add dates to pipeline for filter
+        const body = await request.json();
+        if (body.start) body.start = sanitize(body.start);
+        if (body.end) body.end = sanitize(body.end);
+  
+        if (body.start) dateMatch["date"] = { ...dateMatch["date"], $gte: new Date(body.start)};
+        if (body.end) dateMatch["date"] = { ...dateMatch["date"], $lte: new Date(body.end) };
+
+        console.log(body);
 
         const collection = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
 
         const pipeline = [
-        // Stage 1: Group by category
+        // Stage 1: Optionally match by date range
+            ...(Object.keys(dateMatch).length > 0 ? [{ $match: dateMatch }] : []),
+
+        // Stage 2: Group by category
         {
             $group: {
             _id: "$category.name",
@@ -32,7 +47,7 @@ export async function getFullReport() {
             },
         },
 
-        // Stage 2: Per-category percentages
+        // Stage 3: Per-category percentages
         {
             $addFields: {
             pendingPercent: {
@@ -59,7 +74,7 @@ export async function getFullReport() {
             },
         },
 
-        // Stage 3: Roll up into single document
+        // Stage 4: Roll up into single document
         {
             $group: {
             _id: null,
@@ -86,7 +101,7 @@ export async function getFullReport() {
             },
         },
 
-        // Stage 4: Compute categoryPercent and add report generation timestamp
+        // Stage 5: Compute categoryPercent and add report generation timestamp
         {
             $addFields: {
             timestamp: "$$NOW",
@@ -113,7 +128,7 @@ export async function getFullReport() {
             },
         },
 
-        // Stage 5: Top-level percentages and clean up
+        // Stage 6: Top-level percentages and clean up
         {
             $project: {
             _id: 0,

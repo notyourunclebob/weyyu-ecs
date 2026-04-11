@@ -12,8 +12,8 @@ export function CategoryBarChart({ data }: { data: ReportCategory[] }) {
   }, Number.NEGATIVE_INFINITY);
 
   return (
-    <div className="w-full p-4 bg-gray-200 border border-gray-300">
-      <div className="pb-4">fig #3 : Status of claims by category</div>
+    <div className="w-full p-4 bg-white border border-gray-300">
+      <div className="pb-4">fig #2 : Status of claims by category</div>
       <div className="flex justify-between h-full">
         <div className="font-mono flex flex-col gap-2">
           <div className="bg-bar-total px-1">Total</div>
@@ -25,25 +25,25 @@ export function CategoryBarChart({ data }: { data: ReportCategory[] }) {
           {data.map((categoryData: ReportCategory, index) => (
             <div key={index} className="flex flex-col items-center justify-end">
               <div
-                className="flex items-end font-mono gap-2"
+                className="flex items-end font-mono gap-2 border-b border-gray-400"
                 style={{
                   height: `${calcPercent(categoryData.total, maxTotal)}%`,
                 }}
               >
                 <div className="bg-bar-total h-full w-5 text-center">
-                  {categoryData.total}
+                  {categoryData.total > 0 ? categoryData.total : ""}
                 </div>
                 <div
                   className="bg-bar-pending w-5 text-center"
                   style={{ height: `${categoryData.pendingPercent}%` }}
                 >
-                  {categoryData.pending}
+                  {categoryData.pending > 0 ? categoryData.pending : ""}
                 </div>
                 <div
                   className="bg-bar-approved w-5 text-center"
                   style={{ height: `${categoryData.approvedPercent}%` }}
                 >
-                  {categoryData.approved}
+                  {categoryData.approved > 0 ? categoryData.approved : ""}
                 </div>
                 <div
                   className="bg-bar-denied w-5 text-center"
@@ -64,8 +64,13 @@ export function CategoryBarChart({ data }: { data: ReportCategory[] }) {
 }
 
 export function ExpenseBarchart({ data }: { data: Report }) {
+  const maxExpense: number =
+    data.totalApprovedExpense > data.totalPendingExpense
+      ? data.totalApprovedExpense
+      : data.totalPendingExpense;
+
   return (
-    <div className="w-full p-4 bg-gray-200 border border-gray-300">
+    <div className="w-full p-4 border border-gray-300 bg-white">
       <div className="pb-4">fig#1 : Claim expenses</div>
       <div className="flex flex-col gap-2">
         <div className="flex gap-2 font-mono">
@@ -73,8 +78,8 @@ export function ExpenseBarchart({ data }: { data: Report }) {
           <div className="bg-expense-pending px-1">Pending</div>
         </div>
         <div>
-          <div className="w-30">Total</div>
-          <div className="flex gap-2 items-center">
+          <div className="w-full border-t border-gray-400">Total</div>
+          <div className="flex gap-2 items-center ">
             <div className="font-mono w-30">
               <div>
                 $
@@ -90,11 +95,16 @@ export function ExpenseBarchart({ data }: { data: Report }) {
               </div>
             </div>
             <div className="w-full h-full">
-              <div className="w-full h-4 bg-expense-approved mb-2"></div>
+              <div
+                className="h-4 bg-expense-approved mb-2"
+                style={{
+                  width: `${calcPercent(data.totalApprovedExpense, maxExpense)}%`,
+                }}
+              ></div>
               <div
                 className="h-4 bg-expense-pending"
                 style={{
-                  width: `${calcPercent(data.totalPendingExpense, data.totalApprovedExpense)}%`,
+                  width: `${calcPercent(data.totalPendingExpense, maxExpense)}%`,
                 }}
               ></div>
             </div>
@@ -102,7 +112,9 @@ export function ExpenseBarchart({ data }: { data: Report }) {
         </div>
         {data.categoryData.map((categoryData: ReportCategory, index) => (
           <div key={index}>
-            <div className="w-30">{categoryData.name}:</div>
+            <div className="w-full border-t border-gray-400">
+              {categoryData.name}:
+            </div>
             <div className="flex gap-2 items-center">
               <div className="font-mono w-30">
                 <div>
@@ -122,13 +134,13 @@ export function ExpenseBarchart({ data }: { data: Report }) {
                 <div
                   className="h-4 mb-2 bg-expense-approved"
                   style={{
-                    width: `${calcPercent(categoryData.approvedExpense, data.totalApprovedExpense)}%`,
+                    width: `${calcPercent(categoryData.approvedExpense, maxExpense)}%`,
                   }}
                 ></div>
                 <div
                   className="h-4 bg-expense-pending"
                   style={{
-                    width: `${calcPercent(categoryData.pendingExpense, data.totalApprovedExpense)}%`,
+                    width: `${calcPercent(categoryData.pendingExpense, maxExpense)}%`,
                   }}
                 ></div>
               </div>

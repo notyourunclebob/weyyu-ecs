@@ -13,7 +13,8 @@
   "dependencies": {
     "@vercel/blob": "^2.3.0",
     "bcryptjs": "^3.0.3",
-    "html2pdf.js": "^0.14.0",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.2.1",
     "mongodb": "^6.20.0",
     "next": "^16.1.6",
     "next-auth": "^4.24.13",
@@ -26,7 +27,6 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/bcryptjs": "^2.4.6",
-    "@types/html2pdf.js": "^0.10.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

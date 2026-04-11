@@ -1,43 +1,109 @@
 "use client";
+import { PdfExport } from "@/tools/PdfExport";
+import { Report, ReportCategory } from "@/tools/repot.model";
+import { ExpenseBarchart, CategoryBarChart } from "./BarChart";
+import PieChart from "./PieChart";
+import { PieSlice } from "@/tools/PieChartGen";
 
-import { useRef } from "react";
+export default function ReportPdf({ reportData }: { reportData: Report }) {
+  const timestamp = new Date(reportData.timestamp).toISOString();
 
-interface ExportPdfProps {
-  targetId: string; // ID of the HTML element to export
-  filename?: string;
-}
+  const { ref, exportPdf } = PdfExport<HTMLDivElement>({
+    filename: `report-${timestamp}.pdf`,
+    scale: 2,
+    orientation: "portrait",
+  });
 
-export default function ExportPdf({
-  targetId,
-  filename = "export.pdf",
-}: ExportPdfProps) {
-  const isExporting = useRef(false);
+  return (
+    <div>
+      <button
+        onClick={exportPdf}
+        className="bg-black text-white text-sm px-3 py-1 rounded hover:bg-gray-800 transition-colors"
+      >
+        Export PDF
+      </button>
+      <div className="flex justify-center">
+        <div ref={ref} className="w-300 h-fit p-10 bg-white">
+          <div className="pb-2">ECS Report: {timestamp}</div>
+          <div className="p-2 bg-black text-yutaniGrey text-xl">
+            Expense Summary
+          </div>
+          <table className="table w-full mb-5">
+            <thead>
+              <tr>
+                <th>Total</th>
+                <th>Pending</th>
+                <th>Approved</th>
+                <th>Pending Expenses</th>
+                <th>Approved Expenses</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="font-mono bg-gray-200">
+                <td>{reportData.totalClaims}</td>
+                <td>{reportData.totalPending}</td>
+                <td>{reportData.totalApproved}</td>
+                <td>
+                  $
+                  {reportData.totalPendingExpense.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+                <td>
+                  $
+                  {reportData.totalApprovedExpense.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-  const handleExport = async () => {
-    if (isExporting.current) return;
-    isExporting.current = true;
+          <ExpenseBarchart data={reportData} />
+          <div className="p-2 bg-black text-yutaniGrey text-xl mt-5">
+            Category Breakdown
+          </div>
+          <table className="table w-full mb-5">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Pending</th>
+                <th>Approved</th>
+                <th>Pending Expenses</th>
+                <th>Approved Expenses</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportData.categoryData.map(
+                (reportCategory: ReportCategory, index) => (
+                  <tr key={index}>
+                    <td>{reportCategory.name}</td>
+                    <td>{reportCategory.total}</td>
+                    <td>{reportCategory.pending}</td>
+                    <td>{reportCategory.approved}</td>
+                    <td>
+                      $
+                      {reportCategory.pendingExpense.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      $
+                      {reportCategory.approvedExpense.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                      })}
+                    </td>
+                  </tr>
+                ),
+              )}
+            </tbody>
+          </table>
 
-    const element = document.getElementById(targetId);
-    if (!element) {
-      console.error(`Element with id "${targetId}" not found`);
-      isExporting.current = false;
-      return;
-    }
-
-    // Dynamically import to avoid SSR issues
-    const html2pdf = (await import("html2pdf.js")).default;
-
-    const options: any = {
-      margin: 10,
-      filename: filename,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-
-    await html2pdf().set(options).from(element).save();
-    isExporting.current = false;
-  };
-
-  return <button onClick={handleExport}>Export PDF</button>;
+          <CategoryBarChart data={reportData.categoryData} />
+          <PieChart data={pieData} size={300} />
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -15,12 +15,34 @@
     --color-expense-pending: #22d3ee;
 }
 
-.pdf-safe {
-  color: #000000 !important;
-  background-color: #ffffff !important;
-}
+@layer {
+  .table {
+    & th {
+      padding: 0.5rem;
+    }
 
-.pdf-safe * {
-  color: inherit !important;
-  background-color: inherit !important;
+    & td {
+      padding: 0.2rem 0.5rem;
+      border-right-width: 1px;
+      border-right-style: solid;
+      border-right-color:gray;
+    }
+
+    & td:last-of-type {
+      border-right-style: none;
+    }
+
+    & tbody tr {
+      font-size: large;
+      font-family: monospace;
+    }
+
+    & tbody tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+
+    & tbody tr:nth-child(even) {
+      background-color: #e5e7eb;
+    }
+  }
 }

@@ -1,5 +1,7 @@
+import { NextRequest } from "next/server";
+
 import { getFullReport } from "@/tools/ReportManager";
 
-export function GET() {
-    return getFullReport();
+export function POST(request: NextRequest) {
+    return getFullReport(request);
 }
