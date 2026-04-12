@@ -11,6 +11,8 @@ const COLLECTION_CLAIMS: string = "claims";
 
 /** 
  * When called will query database and return a list of all category data
+ * @returns Message and status data with an array of all category data
+ * @author James Wilson
 */
 export async function getCategories() {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -44,7 +46,10 @@ export async function getCategories() {
 /** 
  * Adds a new category to the database. New categories will always have no additional requirements and allow for editing.
  * @param request accepts json requests with the following format:
+ * @example 
  * { "name": "" }
+ * @returns Message and status data with result data from the database
+ * @author James Wilson
 */
 export async function createCategory(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -80,8 +85,11 @@ export async function createCategory(request: NextRequest) {
 /** 
  * Changes category if it is editable
  * @param request accepts json requests with the following format:
+ * @example
  * { name: "" }
  * @param id used to serch db for a matching object id
+ * @returns Message and status data with update result data from the database
+ * @author James Wilson
 */
 export async function editCategory(request: NextRequest, id: string) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -138,7 +146,10 @@ export async function editCategory(request: NextRequest, id: string) {
 /** 
  * Deletes the category with the matching id
  * @param request Reqest used to identify the category _id to delete with the following format:
+ * @example
  * { _id: "" }
+ * @returns Message and status data with delete result data from the database
+ * @author James Wilson
 */
 export async function deleteCategory(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);

@@ -2,7 +2,18 @@ import { useRef, useCallback } from 'react';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 
-
+/** 
+ * Utility to export an HTML element as a pdf image
+ * @param options Set options for pdf the exporter
+ * @example
+ * const { ref, exportPdf } = PdfExport<HTMLDivElement>({
+    filename: `filename.pdf`,
+    scale: 2,
+    orientation: "portrait",
+  });
+  @returns reference for the element converted to an image and a callback function converting it to pdf
+  @author James Wilson
+*/
 export function PdfExport<T extends HTMLElement>(options: ExportOptions = {}) {
   const ref = useRef<T>(null);
 

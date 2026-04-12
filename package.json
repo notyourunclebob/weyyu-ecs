@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "production": "next build && next start",
-    "docs": "typedoc --entryPoints ./src --out docs --entryPointStrategy expand"
+    "docs": "typedoc",
+    "docs:watch": "typedoc --watch"
   },
   "dependencies": {
     "@vercel/blob": "^2.3.0",

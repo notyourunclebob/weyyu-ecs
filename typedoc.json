@@ -1,0 +1,24 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src/tools"],
+  "entryPointStrategy": "expand",
+  "out": "docs",
+  "tsconfig": "./tsconfig.json",
+  "exclude": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "excludePrivate": true,
+  "excludeProtected": false,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "readme": "./README.md",
+  "name": "WeyYu ECS: tools",
+  "plugin": [],
+  "skipErrorChecking": true,
+  "logLevel": "Info"
+}

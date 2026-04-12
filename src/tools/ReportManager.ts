@@ -9,7 +9,13 @@ const DB_NAME: string = "ecsdb";
 const COLLECTION_CLAIMS: string = "claims";
 
 /** 
- * Generates a report of claims total expenses and statuses ommiting denied claims. Also generates reports per claim category.
+ * Generates a report of claims expenses and statuses from the claims dataase through an aggrigate pipeline.
+ * Optionally includes a start/end date filter
+ * @param request A request that optionally contains date filter data
+ * @example
+ * { "start": "", "end": ""}
+ * @returns Message and status data with report data from the database
+ * @author James Wilson (AI tooled)
 */
 export async function getFullReport(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);

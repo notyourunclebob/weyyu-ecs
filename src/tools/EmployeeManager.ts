@@ -11,6 +11,9 @@ const COLLECTION_EMPLOYEES: string = "employees";
 /** 
  * Checks login credentials to allow for ecs access. When login is successful user data is retreved from the database.
  * @param credentials a record of username and password submitted for login
+ * @returns User information in an array or null if credentials are bad
+ * @throws {error} if username or password are missing
+ * @author James Wilson
 */
 export async function nextAuthLogin(credentials: Record<"username" | "password", string>) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -49,6 +52,20 @@ export async function nextAuthLogin(credentials: Record<"username" | "password",
     }
 }
 
+/** 
+ * Creates a new employee from request data
+ * @param request Request containing new employee data in json
+ * @example
+ * {
+    "employeeId": "",
+    "firstName": "",
+    "lastName": "",
+    "password": "",
+    "admin": false
+    }
+    @returns Message and status data with insert result data from the database
+    @author James Wilson
+*/
 export async function createEmployee(request: NextRequest) {
 
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -94,6 +111,8 @@ export async function createEmployee(request: NextRequest) {
 
 /** 
  * When called will query datadase and return a list of all employee data
+ * @returns Message and status data with an array of all employees
+ * @author James Wilson
 */
 export async function getEmployees() {
 
@@ -125,8 +144,21 @@ export async function getEmployees() {
     );
 }
 
-// *** this is out of scope ***
-// updates an existing employee 
+/** 
+ * Updates employee data with data from the request
+ * @param request Request containing employee data
+ * @example 
+ * {
+    "employeeId": "",
+    "firstName": "",
+    "lastName": "",
+    "password": "",
+    "admin": false
+    }
+    @param id Stringified ObjectId to match the employee in the database
+    @returns Message and status data with update result data from the database
+    @author James Wilson
+*/
 export async function updateEmployee(request: NextRequest, id: string) {
 
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -178,6 +210,14 @@ export async function updateEmployee(request: NextRequest, id: string) {
     }
 }
 
+/** 
+ * Deletes an employee from the employees database
+ * @param request Request contailning ObjectId of the employee to delete
+ * @example
+ * { "_id": "" }
+ * @returns Message and status data with delete result data from the database
+ * @author James Wilson
+*/
 export async function deleteEmployee(request: NextRequest) {
 
     let mongoClient: MongoClient = new MongoClient(URL);

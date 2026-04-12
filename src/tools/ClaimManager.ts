@@ -10,6 +10,8 @@ const COLLECTION_CLAIMS: string = "claims";
 
 /** 
  * When called will query database and return a list of all claim data
+ * @returns Message and status data with an array of all claims
+ * @author James Wilson
 */
 export async function getClaimsAll() {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -43,7 +45,11 @@ export async function getClaimsAll() {
 
 /** 
  * When called will query database and return a list of all claims for a single employee
- * @param request returned claims will match the employeeId. ex: { employeeId: "EC#4861258765" }
+ * @param request returned claims will match the employeeId.
+ * @example
+ * { employeeId: "EC#4861258765" }
+ * @returns Message and status data with an array of claims form a single employee
+ * @author James Wilson
 */
 export async function getClaimsEmployee(request: NextRequest) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -90,6 +96,7 @@ export async function getClaimsEmployee(request: NextRequest) {
 /** 
  * Adds a claim to the database with an 'open' status. Takes special conciderations sanitizing 'Travel' claims
  * @param request accepts json requests with the following format:
+ * @example
  * {
    "employeeId": "",
    "receipt": "",
@@ -102,8 +109,9 @@ export async function getClaimsEmployee(request: NextRequest) {
        "locationStart": "",
        "locationEnd": "",
        "distanceKm": 0
-   }
-}
+    }
+    @returns Message and status data with result data from the database
+    @author James Wilson
 */
 export async function createClaim(request: NextRequest, userId: string) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -153,8 +161,11 @@ export async function createClaim(request: NextRequest, userId: string) {
 /** 
  * Changes claim status based on submitted request
  * @param request accepts json requests with the following format:
+ * @example
  * { status: "", comment: "" }
  * @param id used to serch db for a matching object id
+ * @returns Message and status data with result data from the database
+ * @author James Wilson
 */
 export async function changeClaimStatus(request: NextRequest, id: string) {
     let mongoClient: MongoClient = new MongoClient(URL);
@@ -236,6 +247,7 @@ export async function getClaimById(claim_id: string) {
 /**
  * Sets acknowledged to true for all provided claim IDs
  * @param claimIds Array of claim _id strings to acknowledge
+ * @author Drew MacEachern
  */
 export async function acknowledgeClaims(claimIds: string[]) {
     let mongoClient: MongoClient = new MongoClient(URL);
