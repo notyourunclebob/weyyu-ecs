@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "production": "next build && next start",
+    "production": "next start",
     "docs": "typedoc",
     "docs:watch": "typedoc --watch"
   },
@@ -16,7 +16,7 @@
     "bcryptjs": "^3.0.3",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
-    "mongodb": "^6.20.0",
+    "mongodb": "^6.21.0",
     "next": "^16.1.6",
     "next-auth": "^4.24.13",
     "react": "^19.0.0",

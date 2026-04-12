@@ -67,6 +67,10 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Inject secrets into task definition
+        run: |
+          sed -i 's|PLACEHOLDER|${{ secrets.DB_URL }}|g' .aws/task-definition.json
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
