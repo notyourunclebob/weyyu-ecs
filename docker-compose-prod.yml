@@ -1,19 +1,4 @@
-services:
-  mongo:
-    build:
-      context: ./mongo
-      dockerfile: Dockerfile
-    image: mongo-server
-    container_name: ecs-mongo-server
-    volumes:
-      - data-volume:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: ecsdb
-    ports:
-      - "27017:27017"
-    networks:
-      - linkednetwork
-            
+services:            
   app:
     build:
       context: ./
