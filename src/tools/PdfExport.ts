@@ -14,6 +14,16 @@ import jsPDF from 'jspdf';
   @returns reference for the element converted to an image and a callback function converting it to pdf
   @author James Wilson
 */
+
+interface ExportOptions {
+  filename?: string;
+  format?: 'a4' | 'letter' | 'a3';
+  orientation?: 'portrait' | 'landscape';
+  margin?: number;
+  scale?: number;
+  quality?: number;
+}
+
 export function PdfExport<T extends HTMLElement>(options: ExportOptions = {}) {
   const ref = useRef<T>(null);
 
