@@ -46,7 +46,30 @@ permissions:
   contents: read
 
 jobs:
+  test:
+    name: Test Database Connection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install mongosh
+        run: |
+          wget -qO- https://www.mongodb.com/try/download/shell | tar xz
+          sudo mv mongosh /usr/local/bin/
+
+      - name: Test Atlas DB connection
+        env:
+          MONGO_URI: ${{ secrets.DB_URL }}
+        run: |
+          mongosh "$MONGO_URI" --eval "
+            const result = db.runCommand({ ping: 1 });
+            if (result.ok !== 1) { quit(1); }
+            print('Atlas connection test passed');
+          "
   deploy:
+    needs: test
     name: Deploy
     runs-on: ubuntu-latest
     environment: production
