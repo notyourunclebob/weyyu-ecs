@@ -112,6 +112,8 @@ export default function GetReport() {
         );
 
         setReportOk(true);
+      } else {
+        setMessage(result.data.error);
       }
     } catch (error: any) {
       setStatus("error");
@@ -149,7 +151,10 @@ export default function GetReport() {
                   />
                 </div>
               </div>
-              <div className="text-red-700">{invalid}</div>
+              <div className="text-red-700">
+                {invalid}
+                {message}
+              </div>
             </div>
             <div className="flex justify-between gap-4 p-4">
               <button

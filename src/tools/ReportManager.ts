@@ -32,8 +32,6 @@ export async function getFullReport(request: NextRequest) {
         if (body.start) dateMatch["date"] = { ...dateMatch["date"], $gte: new Date(body.start)};
         if (body.end) dateMatch["date"] = { ...dateMatch["date"], $lte: new Date(body.end) };
 
-        console.log(body);
-
         const collection = await mongoClient.db(DB_NAME).collection<Claim>(COLLECTION_CLAIMS);
 
         const pipeline = [
@@ -174,7 +172,7 @@ export async function getFullReport(request: NextRequest) {
         const [report]: Report[] = await collection.aggregate<Report>(pipeline).toArray();
 
         if (!report) {
-            let error = "Failed to generate Report"
+            let error = "No matching dates found"
             return NextResponse.json(
                 { error: error },
                 { status: 404, statusText: error }
